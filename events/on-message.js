@@ -13,12 +13,12 @@ module.exports = {
     const client = message.client;
 
     // get cached roles of a user
-    const roleCache = message.channel.type != "dm" && message.member && message.member.roles ? message.member.roles.cache || [] : [];
+    const roleCache = message.channel.type != "dm" && message.member && message.member.roles && message.member.roles.cache ? [...message.member.roles.cache.keys()] || [] : [];
 
     // Run the word count code for the message if the poster has the "user" perms and the server is correct
     if ((message.guild.id == config.guild) && roleCache.includes(config.perms.user)) {
       try {
-        client.events.get("on-wordcount").event(message);
+        client.events.get("onWordcount").event(message);
       } catch (err) {
         console.error(err);
       }
@@ -102,14 +102,14 @@ module.exports = {
         // check perms for admin/mod commands where user isn't a dev
         if (message.author.id != config.perms.dev) {
           // only check further if user isn't an admin
-          if (!roleCache.has(config.perms.admin) || !message.member.hasPermission("ADMINISTRATOR")) {
+          if (!roleCache.includes(config.perms.admin) || !message.member.hasPermission("ADMINISTRATOR")) {
             if (command.perms == "admin") {
               return message.reply("You do not have the required permissions to use this command; this command is only for server admins.");
               // only check further for non-mods (as mod is one down from admin)
-            } else if (!roleCache.has(config.perms.mod)) {
+            } else if (!roleCache.includes(config.perms.mod)) {
               if (command.perms == "mod") {
                 return message.reply("You do not have the required permissions to use this command; this command is only for server moderators.");
-              } else if (!roleCache.has(config.perms.user)) {
+              } else if (!roleCache.includes(config.perms.user)) {
                 if (command.perms == "user") {
                   // don't do anything for non-vetted users
                   return;

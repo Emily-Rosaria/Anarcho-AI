@@ -10,7 +10,7 @@ module.exports = {
     var options = { upsert: true, new: true, setDefaultsOnInsert: true };
     const now = new Date();
 
-    const oldUserData = await Users.findOneAndUpdate({_id: message.author.id},{last:now.getTime()},options}).exec();
+    const oldUserData = await Users.findOneAndUpdate({_id: message.author.id},{last:now.getTime()},options).exec();
 
     var words = !oldUserData.wordcounts ? [] : (!oldUserData.wordcounts.keys() ? [] : [ ...oldUserData.wordcounts.keys() ]);
     words = words.concat(config.default_words).map(w=>w.toLowerCase());

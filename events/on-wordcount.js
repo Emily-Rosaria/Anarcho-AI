@@ -12,19 +12,17 @@ module.exports = {
 
     const oldUserData = await Users.findOneAndUpdate({_id: message.author.id},{last:now.getTime()},options).exec();
 
-    var words = !oldUserData.wordcounts ? [] : (!oldUserData.wordcounts.keys() ? [] : [ ...oldUserData.wordcounts.keys() ]);
+    var words = !oldUserData.counts ? [] : oldUserData.counts;
     words = words.concat(config.default_words).map(w=>w.toLowerCase());
 
     var counts = message.content.replace(/[^\w\s]/g, "").split(/\s+/).reduce((map, word)=>{
       const newWord = word.toLowerCase();
       const newMap = map;
       if (words.includes(newWord)) {
-        newMap["wordcounts.$."+newWord] = (newMap["wordcounts.$."+newWord]||0)+1;
+        newMap["wordcounts."+newWord] = (newMap["wordcounts."+newWord]||0)+1;
       }
       return newMap;
     }, {});
-
-    var updateStr = {};
 
     await Messages.create({
       _id: message.id,
@@ -34,9 +32,13 @@ module.exports = {
       timestamp: message.createdAt.getTime()
     });
 
-    // update user word/char counts
-    const newUserData = await Users.findOneAndUpdate({_id: message.author.id},{
-      "$inc": counts
-    }).exec();
+    if (Object.keys(counts).length == 0) {
+      return; //no change to user word counts
+    }
+
+    var update = {"$inc": counts};
+
+    // update user word counts
+    const newUserData = await Users.findOneAndUpdate({_id: message.author.id},update).exec();
   },
 };

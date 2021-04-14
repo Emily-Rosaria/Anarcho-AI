@@ -62,7 +62,12 @@ client.on('ready', async function() {
 });
 
 client.on('message', async message => {
-    if (message.author.bot) {return} // don't respond to bots
+    if (message.author.bot) {
+      if (message.channel.type != "dm") {
+        client.events.get("onWordcount").event(message);
+      }
+      return; // don't respond to bots aside from counting their word usage
+    }
     client.events.get("onMessage").event(message);
 });
 

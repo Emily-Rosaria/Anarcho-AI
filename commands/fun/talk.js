@@ -6,7 +6,7 @@ module.exports = {
     name: 'talk', // The name of the command
     description: 'Make the bot say random predetermined phrases (this is mostly a test function).', // The description of the command (for help text)
     args: false, // Specified that this command doesn't need any data other than the command
-    perms: false, //restricts to users with the "verifed" role noted at config.json
+    perms: 'user', //restricts to users with the "verifed" role noted at config.json
     allowDM: true,
     usage: '', // Help text to explain how to use the command (if it had any arguments)
     execute(message, args) {

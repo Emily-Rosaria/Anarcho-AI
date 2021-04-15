@@ -22,7 +22,7 @@ module.exports = {
       const data = await Users.findById(userID).exec();
       const words = data && data.wordcounts ? [...data.wordcounts.keys()] : [];
       if (words.length == 0) {
-        return message.reply(`No word counters found for ${userID}. Make sure you properly pinged them or parsed their user ID as an argument. Otherwise, maybe they're just not very based.`);
+        return message.reply(`No word counters found for <@${userID}>. Make sure you properly pinged them or parsed their user ID as an argument. Otherwise, maybe they're just not very based.`);
       }
       const reply = words.reduce((string,word)=>{
         return string + word + ": " + data.wordcounts.get(word) + "\n";

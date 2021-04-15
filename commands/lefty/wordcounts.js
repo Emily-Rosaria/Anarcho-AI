@@ -8,7 +8,7 @@ module.exports = {
     name: 'wordcounts', // The name of the command
     aliases: ['words','counts','wordlist','userwords','wordtable','wordcount'],
     description: 'Shows a table with the counts of how much a user has said different words.', // The description of the command (for help text)
-    perms: 'user', //restricts to bot dev only (me)
+    perms: 'user', 
     allowDM: true,
     usage: '[@user]', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {

@@ -26,8 +26,9 @@ module.exports = {
 
     const botPing = ["<@" + client.user.id + ">","<@!" + client.user.id + ">"];
 
+    const dmExtraPrefix = (message.channel.type == "dm") ? ["!","?","$","-"] : ["XXX"];
     // Find if message begins with a valid command prefix
-    const prefix = config.prefix.concat(botPing).filter(p => message.content.toLowerCase().startsWith(p));
+    const prefix = config.prefix.concat(botPing).concat(dmExtraPrefix).filter(p => message.content.toLowerCase().startsWith(p));
 
     if (!prefix || prefix.length < 1) {
       return;

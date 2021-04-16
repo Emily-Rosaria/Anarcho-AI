@@ -4,6 +4,6 @@ const mongoose = require("mongoose"); //database library
 module.exports = {
   name: "onReactionClear",
   async event(message) {
-
+    return;
   },
 };

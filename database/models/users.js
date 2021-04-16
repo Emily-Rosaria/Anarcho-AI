@@ -13,7 +13,7 @@ var UserSchema = new Schema({ // Create Schema
     type: Map,  // key-value pairs of a string (that invokes the command)
     of: String // and a string (what the bot will say when the command is invoked)
   },
-  count: [String], // array of other words to count under wordcounts
+  count: [String], // array of other words to list when showing wordcounts
   last: Number, // last message date unix
 });
 

@@ -20,7 +20,7 @@ module.exports = {
     allowDM: true,
     usage: '<word> [page-number]', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {
-      const word = args[0].toLowerCase().replace(/[^\w\s'-]/g, "").replace(/<:([^\s:]+):\d{17,23}>/g, "$1");
+      const word = args[0].toLowerCase().replace(/<:([^\s:]+):\d{17,23}>/g, "$1").replace(/[^\w\s'-]/g, "");
 
       const query = {};
       //get query field

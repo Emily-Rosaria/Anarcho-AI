@@ -14,7 +14,7 @@ module.exports = {
     usage: '<anonymous-message>', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {
       if (message.channel.type != "dm") {
-        return message.reply("This command only works in DMs. Message the bot directly to use it.");
+        return message.reply("This command only works in DMs. Message the bot directly to use it. For example:\n> \"`+confess I actually like some Bri'ish accents.`\"");
       }
       var guild = message.client.guilds.resolve(config.guild);
       if (!guild || !guild.available) {

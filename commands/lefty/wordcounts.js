@@ -32,7 +32,7 @@ module.exports = {
       }
 
       // format the data for a reply
-      const reply = words.sort((a,b)=>data.wordcounts.get(b) - data.wordcounts.get(a)).reduce((string,word)=>{
+      const reply = mainwords.sort((a,b)=>data.wordcounts.get(b) - data.wordcounts.get(a)).reduce((string,word)=>{
         return string + word + " - " + data.wordcounts.get(word) + "\n";
       },"```\n") + "```";
       message.channel.send(`<@${userID}>'s wordcounts:\n`+reply);

@@ -17,6 +17,12 @@ module.exports = {
           userID = tempID;
         }
       }
+
+      if (userID == message.client.user.id) {
+        const randomword = config.default_words[Math.floor(config.default_words.length*Math.random())];
+        return message.reply(`Wow! The data for <@${userID}> is off the charts! They've said "${randomword}" over one trillion times!`);
+      }
+
       const data = await Users.findById(userID).exec();
 
       // get array of all words said

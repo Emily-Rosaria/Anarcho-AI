@@ -24,7 +24,7 @@ module.exports = {
       if (!channel) {
         return message.reply("I'm having trouble finding the confession/\"hot takes\" channel. Make sure it's visible and available to bots and users.");
       }
-      var perms = channel.permissionsFor(message.user.id);
+      var perms = channel.permissionsFor(message.author.id);
       if (!perms.has("VIEW_CHANNEL") || !perms.has("SEND_MESSAGES")) {
         return message.reply("You don't seem to have permission to view or send messages in the confession/\"hot takes\" channel.");
       }
@@ -32,24 +32,24 @@ module.exports = {
       const colors = ["#000000","#1ABC9C","#11806A","#2ECC71","#1F8B4C","#3498DB","#206694","#9B59B6","#71368A","#E91E63","#AD1457","#F1C40F","#C27C0E","#E67E22","#A84300","#E74C3C","#992D22","#95A5A6","#979C9F","#7F8C8D","#BCC0C0","#34495E","#2C3E50","#FFFF00","#FFFFFF"];
       const randomColor = colors[Math.floor(Math.random()*colors.length)];
 
-      var randomName = adjectives[Math.floor(Math.random()*adjectives.length)] + " " + nouns[Math.floor(Math.random()*nouns.length)];;
+      var randomName = adjectives[Math.floor(Math.random()*adjectives.length)] + " " + nouns[Math.floor(Math.random()*nouns.length)];
       if (["a","e","i","o","u"].includes(randomName.charAt(0).toLowerCase())) {
         randomName = "an " + randomName;
       } else {
         randomName = "a " + randomName;
       }
       randomName = randomName.split(" ").map(s=>{
-        return s.charAt(0).toUpperCase() + s.subStr(1);
-      });
+        return s.charAt(0).toUpperCase() + s.slice(1);
+      }).join(" ");
       const randomIcon = "https://robohash.org/" + randomName.replace("[^\w\d]","");
 
       const anonText = args.join(" ");
 
       const embed = new Discord.MessageEmbed()
       .setColor(randomColor)
-      .setAuthor(randomName,randomIcon)
+      .setAuthor(randomName,encodeURI(randomIcon))
       .setDescription(anonText)
-      .setFooter("+hottake")
+      .setFooter("An anonymous user submitted this message via the \"confess\" command")
       .setTimestamp();
       channel.send(embed);
     },

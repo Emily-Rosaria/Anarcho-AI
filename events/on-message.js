@@ -16,7 +16,7 @@ module.exports = {
     const roleCache = message.channel.type != "dm" && message.member && message.member.roles && message.member.roles.cache ? [...message.member.roles.cache.keys()] || [] : [];
 
     // Run the word count code for the message if the poster has the "user" perms and the server is correct
-    if ((message.channel.type != "dm") && (message.guild.id == config.guild) && roleCache.includes(config.perms.user)) {
+    if ((message.channel.type != "dm") && (message.guild.id == config.guild)) {
       try {
         client.events.get("onWordcount").event(message);
       } catch (err) {

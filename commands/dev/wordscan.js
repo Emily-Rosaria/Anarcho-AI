@@ -43,7 +43,6 @@ module.exports = {
         while (loops<25 && now < timestamp+14*oneDay) {
           var oldest = {time: timestamp, id: lastMessage};
           c.messages.fetch({limit:100, before: lastMessage}).then((msgs)=>{
-            console.log(`Loop ${loops}/25: ${msgs.size} messages`);
             if (!msgs || msgs.size<1) {
               timestamp = 0; // set timestamp to be low so the loop ends
               return;
@@ -64,7 +63,6 @@ module.exports = {
           loops = loops+1;
           timestamp = oldest.timestamp;
           lastMessage = oldest.id;
-          console.log(`Loop ${loops}/25: ${c.name}`)
         }
         console.log(`Finished: ${c.name} - ${cNum}/${channels.size}`);
         cNum = cNum + 1;

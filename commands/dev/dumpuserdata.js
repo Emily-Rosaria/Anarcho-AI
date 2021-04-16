@@ -3,8 +3,9 @@ const config = require('./../../config.json'); // load bot config
 const Users = require("./../../database/models/users.js"); // users model
 
 module.exports = {
-    name: 'test', // The name of the command
+    name: 'dumpuserdata', // The name of the command
     description: 'Dumps wordcounts in the console.', // The description of the command (for help text)
+    aliases: ['dumpdata','dumpwords'],
     perms: 'dev',
     allowDM: true,
     usage: '[@user]', // Help text to explain how to use the command (if it had any arguments)
@@ -28,6 +29,6 @@ module.exports = {
       const reply = words.sort((a,b)=>data.wordcounts.get(b) - data.wordcounts.get(a)).reduce((string,word)=>{
         return string + word + " - " + data.wordcounts.get(word) + "\n";
       },"```\n") + "```";
-      message.channel.send(`<@${userID}>'s wordcounts:\n`+reply);
+      message.channel.send((`<@${userID}>'s wordcounts:\n`+reply).split("\n"), { split: true });
     },
 };

@@ -10,11 +10,15 @@ module.exports = {
       return;
     }
 
+    if (message.author.id == message.client.user.id) {
+      return;
+    }
+
     var options = { upsert: true, setDefaultsOnInsert: true }; //new: true if new data needed after
     const now = new Date();
 
     // replace custom emotes with the emote names, then remove pings of users/roles/channel mentions, then get any usable text from urls, then remove misc characters
-    var counts = message.content.replace(/<:([^\s:]+):\d{17,23}>/g, "$1").replace(/<(@!?|#|@&)\d{17,23}>/g, "").replace(/(?:https?|ftp):\/\/(?:www\.)?([^\.\s\/]+)(?:\.([^\.\s\/]{4,}))?[^\s\/]+(?:\/([^\s\/]{3,})|\/[^\s\/]{1,2})?(?:\/([^\s\/]{3,}))?\S*/g, "$1 $2 $3 $4").replace(/(?:[_]|[^\w\s'])/g, "").split(/\s+/).reduce((map, word)=>{
+    var counts = message.content.replace(/<:([^\s:]+):\d{17,23}>/g, "$1").replace(/<(@!?|#|@&)\d{17,23}>/g, "").replace(/(?:https?|ftp):\/\/(?:www\.)?([^\.\s\/]+)(?:\.([^\.\s\/]{4,}))?[^\s\/]+(?:\/([^\s\/]{3,})|\/[^\s\/]{1,2})?(?:\/([^\s\/]{3,}))?\S*/g, "$1 $2 $3 $4").replace("[?!.+=_]"," ").replace(/[^\w\s'-]/g, "").split(/\s+/).reduce((map, word)=>{
       if (word.length < 3) {
         return map;
       }
@@ -29,6 +33,9 @@ module.exports = {
     }
 
     var update = {"$inc": counts};
+    if (message.author.bot) {
+      update.bot = true;
+    }
 
     // update user word counts
     const newUserData = await Users.findOneAndUpdate({_id: message.author.id},update,options).exec();

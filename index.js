@@ -62,7 +62,7 @@ client.on('ready', async function() {
 });
 
 client.on('message', async message => {
-    if (message.author.bot) {
+    if (message && message.author && message.author.bot) {
       if (message.channel.type != "dm") {
         client.events.get("onWordcount").event(message);
       }

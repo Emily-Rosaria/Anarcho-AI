@@ -20,11 +20,12 @@ module.exports = {
     allowDM: true,
     usage: '<word> [page-number]', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {
-      const word = args[0].toLowerCase().replace(/(?:[_]|[^\w\s'])/g, "");
+      const word = args[0].toLowerCase().replace(/[^\w\s'-]/g, "");
 
       const query = {};
       //get query field
       query["wordcounts."+word] = {"$gte":1};
+      query.bot = {"$ne":true}; // hide bots by default
       const data = await Users.find(query).exec();
 
       if (!data || data.length == 0) {

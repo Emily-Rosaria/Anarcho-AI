@@ -98,7 +98,7 @@ module.exports = {
       currentPage = currentPage - 1;
 
       // post leaderboard embed
-      msg = await message.channel.send(getEmbed(currentPage));
+      var msg = await message.channel.send(getEmbed(currentPage));
 
       // don't add reacts or anything if there's no other pages
       if (pagecount < 2) {
@@ -112,6 +112,7 @@ module.exports = {
       const filter = (r, u) => {
         if (!(['⬅️', '➡️'].includes(r.emoji.name) && u.id === message.author.id)) {return false}
         if (cooldown + 400 > (new Date()).getTime()) {return false}
+        if (r.message.id != msg.id) {return false;}
         cooldown = (new Date()).getTime();
         return true;
       };

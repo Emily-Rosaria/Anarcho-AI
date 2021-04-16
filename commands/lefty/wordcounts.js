@@ -12,9 +12,9 @@ module.exports = {
     async execute(message, args) {
       var userID = message.author.id;
       if (args.length > 0) {
-        const tempID = args[0].match(/\d{17}\d+/);
-        if (tempID && tempID.length > 0 && tempID[0].length < 23) {
-          userID = tempID;
+        const tempID = args[0].match(/\d{17,23}/);
+        if (tempID && tempID.length > 0) {
+          userID = tempID[0];
         }
       }
 

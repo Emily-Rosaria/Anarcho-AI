@@ -10,10 +10,8 @@ module.exports = {
     usage: '<channelID> <message-text>', // Help text to explain how to use the command (if it had any arguments)
     args: 2,
     execute(message, args) {
-      var channelID = args[0];
-      const contentArr = message.content.split(/" "/);
-      contentArr.shift();
-      const content = contentArr.join(" ");
+      var channelID = args.shift();
+      const content = args.join(" ");
 
       // get channel
       message.client.channels.fetch(channelID).then(c=>{

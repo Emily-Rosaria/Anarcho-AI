@@ -66,7 +66,11 @@ module.exports = {
       console.log('Events done, now reloading config.');
 
       delete require.cache[require.resolve('./../../config.json')];
-      delete require.cache[require.resolve('./../../assets/catfacts.json')];
+
+      const assetJsons = fs.readdirSync('./assets',{ withFileTypes: true }).filter((f)=>f.name.endsWith('.json'));
+      assetJsons.forEach((assetJ) => {
+        delete require.cache[require.resolve('./../../assets/'+assetJ.name)];
+      });
 
       message.reply('Done! Outside of the database and index.js, the bot should be fully updated! May require an additional update for the update command to be affected.');
     },

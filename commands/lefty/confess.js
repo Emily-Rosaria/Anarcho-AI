@@ -14,7 +14,7 @@ module.exports = {
     usage: '<anonymous-message>', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {
       if (message.channel.type != "dm") {
-        return message.reply("This command only works in DMs. Message the bot directly to use it. For example:\n> \"`+confess I actually like some Bri'ish accents.`\"");
+        return message.reply("This command only works in DMs. Message the bot directly to use it. For example, you might send the bot this message:\n> \"`+confess I actually like some Bri'ish accents.`\"");
       } else if (args.length == 0) {
         return message.reply("That command requires more details!\nThe proper usage would be: `+confess <anonymous-message>`.");
       }

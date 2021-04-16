@@ -5,8 +5,12 @@ module.exports = {
   name: "onMessage",
   async event(message) {
 
-    // don't do anything for new messages with no content or partial messages
-    if (!message.content || (message.partial && !message.channel && !message.author && !message.client)) {
+    if (message.channel.id == config.channels.voting) {
+      await msg.react('👍').then(()=>msg.react('👎')).catch(()=>console.log("Can't react in the voting channel: #"+message.channel.name));
+    }
+
+    // end if there's no content
+    if (!message.content) {
       return;
     }
 

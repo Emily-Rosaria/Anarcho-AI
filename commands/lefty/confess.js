@@ -10,7 +10,7 @@ module.exports = {
     description: 'Posts a super message in the hot takes channel for you, secretly so no one else will know who sent it. Use this command in DMs with the bot.', // The description of the command (for help text)
     perms: 'user',
     allowDM: true,
-    cooldown: 300,
+    cooldown: 5,
     usage: '<anonymous-message>', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {
       if (message.channel.type != "dm") {
@@ -20,7 +20,7 @@ module.exports = {
       if (!guild || !guild.available) {
         return message.reply("I'm having trouble connecting to the confession/\"hot takes\" channel on the server at the moment, try again in a bit.");
       }
-      var channel = guild.channels.resolve();
+      var channel = guild.channels.resolve(config.channels.confess);
       if (!channel) {
         return message.reply("I'm having trouble finding the confession/\"hot takes\" channel. Make sure it's visible and available to bots and users.");
       }

@@ -1,0 +1,54 @@
+const mongoose = require("mongoose"); //database library
+const config = require('./../../config.json'); // load bot config
+const Users = require("./../../database/models/users.js"); // users model
+const Docs = require("./../../database/models/documents.js"); // users model
+
+module.exports = {
+    name: 'newdoc', // The name of the command
+    aliases: ['adddoc','addpasta','newpasta','addnote','newnote'],
+    description: 'Adds a text "document" that the bot can repost whenever. Overwrites any doc the user has saved if the name is identical.', // The description of the command (for help text)
+    perms: 'user',
+    allowDM: true,
+    args: 2,
+    usage: '<name> <content>', // Help text to explain how to use the command (if it had any arguments)
+    async execute(message, args) {
+      var userID = message.author.id;
+
+      var content = "";
+      var title = "";
+      if (args[0].startsWith('"')) {
+        title = message.content.split('"')[1].trim().toLowerCase();
+      } else {
+        title = args[0].toLowerCase();
+      }
+      title = title.replace(/ {2,}/," ");
+      const regex = new RegExp(`^.+\w+ ${title} `, 'g');
+      var content = message.content.replace(regex,"").trim();
+
+      if (!content || content == "") {
+        return message.reply(`Invalid content for your ${title} document. Make sure to write at least two arguments for the command. If the name value is multiple words, write it within "quotation marks". Don't write the content within these symbols.`);
+      }
+
+      var options = { upsert: true, setDefaultsOnInsert: true };
+
+      var update = {};
+      update["documents."+title] = message.id;
+      update = {"$set":update};
+      const data = await Users.findOneAndUpdate({_id: message.author.id},update,options).exec();
+
+      await Docs.create({
+        _id: message.id,
+        name: title,
+        content: content,
+        user: userID,
+        type: "text"
+      });
+
+      if (data && data.documents && data.documents.has(title)) {
+        await Docs.findByIdAndRemove(data.documents.get(title)).exec();
+        message.reply("An old copypasta with that name was overwritten with the new text provided! Use the `+doc "+title+"` command to have the bot say it.");
+      } else {
+        message.reply("Your copypasta has been created! Use the `+doc "+title+"` command to have the bot say it.");
+      }
+    },
+};

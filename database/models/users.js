@@ -12,7 +12,7 @@ var UserSchema = new Schema({ // Create Schema
   },
   documents: {
     type: Map,  // key-value pairs of a string (that invokes the command)
-    of: String // and a string (what the bot will say when the command is invoked)
+    of: String // and a string "ID", the _id of the document and the id of the discord message that created it
   },
   count: [String], // array of other words to list when showing wordcounts
   last: Number, // last message date unix

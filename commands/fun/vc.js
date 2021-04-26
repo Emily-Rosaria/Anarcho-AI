@@ -8,7 +8,7 @@ module.exports = {
     allowDM: false,
     usage: '', // Help text to explain how to use the command (if it had any arguments)
     execute(message, args) {
-        const attachment = new Discord.MessageAttachment('./../../assets/bernie-vc.png', 'bernie-vc.png');
+        const attachment = new Discord.MessageAttachment('./assets/bernie-vc.png', 'bernie-vc.png');
         const embed = new Discord.MessageEmbed()
           .setColor('#EDEDED')
           .setImage('attachment://bernie-vc.png')

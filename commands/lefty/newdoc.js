@@ -16,13 +16,15 @@ module.exports = {
 
       var title = "";
       if (args[0].startsWith('"')) {
-        title = '"'+message.content.split('"')[1]+'"';
+        const quotes = message.content.split('"');
+        title = '"'+quotes[1];
+        title = quotes.length > 2 ? title + '"' : title;
       } else {
         title = args[0];
       }
       const regex = new RegExp(`^.+\\w +${title}`, 'g');
       var content = message.content.replace(regex,"").trim();
-      title = title.replace(/ {2,}/," ").toLowerCase().trim().replace('"',"");
+      title = title.replace(/ {2,}/," ").toLowerCase().trim().replace(/"/g,"");
 
       if (!content || content == "") {
         return message.reply(`Invalid content for your ${title} document. Make sure to write at least two arguments for the command. If the name value is multiple words, write it within "quotation marks". Don't write the content within these symbols.`);

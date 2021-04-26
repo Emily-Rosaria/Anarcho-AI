@@ -14,16 +14,15 @@ module.exports = {
     async execute(message, args) {
       var userID = message.author.id;
 
-      var content = "";
       var title = "";
       if (args[0].startsWith('"')) {
-        title = message.content.split('"')[1].trim().toLowerCase();
+        title = '"'+message.content.split('"')[1]+'"';
       } else {
-        title = args[0].toLowerCase();
+        title = args[0];
       }
-      title = title.replace(/ {2,}/," ");
-      const regex = new RegExp(`^.+\w+ ${title} `, 'g');
+      const regex = new RegExp(`^.+\\w +${title}`, 'g');
       var content = message.content.replace(regex,"").trim();
+      title = title.replace(/ {2,}/," ").toLowerCase().trim().replace('"',"");
 
       if (!content || content == "") {
         return message.reply(`Invalid content for your ${title} document. Make sure to write at least two arguments for the command. If the name value is multiple words, write it within "quotation marks". Don't write the content within these symbols.`);

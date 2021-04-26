@@ -6,7 +6,7 @@ const Docs = require("./../../database/models/documents.js"); // users model
 module.exports = {
     name: 'newdoc', // The name of the command
     aliases: ['adddoc','addpasta','newpasta','addnote','newnote'],
-    description: 'Adds a text "document" that the bot can repost whenever. Overwrites any doc the user has saved if the name is identical.', // The description of the command (for help text)
+    description: 'Adds a text "document" that the bot can repost whenever. Overwrites any doc the user has saved if the name is identical. Pings and mentions are removed, so use plaintext if you wish to reference another user.', // The description of the command (for help text)
     perms: 'user',
     allowDM: true,
     args: 2,

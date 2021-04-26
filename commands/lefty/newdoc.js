@@ -22,8 +22,10 @@ module.exports = {
       } else {
         title = args[0];
       }
-      const regex = new RegExp(`^.+\\w +${title}`, 'g');
-      var content = message.content.replace(regex,"").trim();
+      const names = "("+this.aliases.concat(this.name).join('|')+")";
+      const regex1 = new RegExp(`^\\S+ *${names} +`, 'g');
+      const regex2 = new RegExp(`^ *${title}`, 'g');
+      var content = message.content.trim().replace(regex1,"").replace(regex2,"");
       title = title.replace(/ {2,}/," ").toLowerCase().trim().replace(/"/g,"");
 
       if (!content || content == "") {

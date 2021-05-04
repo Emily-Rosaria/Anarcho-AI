@@ -23,13 +23,13 @@ module.exports = {
         Docs.find({name: title}, (err,docs)=>{
           if (err || !docs || docs.length == 0) {
             return message.reply(`No saved document found with that name in the database. You'll need to create your own with the \`+newdoc\` command.`);
-            let index = Math.floor(docs.length * Math.random());
-            const doc = docs[index];
-            if (doc.content) {
-              return message.channel.send(doc.content,{disableMentions:"all"});
-            } else {
-              return message.reply("Error with the database. No document content.");
-            }
+          }
+          let index = Math.floor(docs.length * Math.random());
+          const doc = docs[index];
+          if (doc.content) {
+            return message.channel.send(doc.content,{disableMentions:"all"});
+          } else {
+            return message.reply("Error with the database. No document content.");
           }
         });
         return;

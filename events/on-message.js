@@ -6,7 +6,7 @@ module.exports = {
   async event(message) {
 
     if (message.channel.id == config.channels.voting) {
-      await msg.react('👍').then(()=>msg.react('👎')).catch(()=>console.log("Can't react in the voting channel: #"+message.channel.name));
+      await message.react('👍').then(()=>message.react('👎')).catch(()=>console.log("Can't react in the voting channel: #"+message.channel.name));
     }
 
     // end if there's no content

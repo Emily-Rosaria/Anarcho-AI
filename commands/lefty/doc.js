@@ -18,8 +18,21 @@ module.exports = {
 
       const data = await Users.findById({_id: message.author.id}).exec();
 
+      // search database for docs from other users
       if (!data || !data.documents || !data.documents.has(title)) {
-        return message.reply(`No saved document found with that name.`);
+        Docs.find({name: title}, (err,docs)=>{
+          if (err || !docs || docs.length == 0) {
+            return message.reply(`No saved document found with that name in the database. You'll need to create your own with the \`+newdoc\` command.`);
+            let index = Math.floor(docs.length * Math.random());
+            const doc = docs[index];
+            if (doc.content) {
+              return message.channel.send(doc.content,{disableMentions:"all"});
+            } else {
+              return message.reply("Error with the database. No document content.");
+            }
+          }
+        });
+        return;
       }
 
       Docs.findById({_id: data.documents.get(title)}, (err,doc)=>{

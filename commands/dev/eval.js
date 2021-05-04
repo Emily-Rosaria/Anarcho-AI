@@ -9,17 +9,17 @@ module.exports = {
     usage: '<code>', // Help text to explain how to use the command (if it had any arguments)
     args: true,
     execute(message, args) {
-      if (message.author.id != config.dev) {
+      if (message.author.id != config.perms.dev) {
         return;
       }
       const chunks = message.content.split('```');
       if (chunks.length < 2) {
         return message.reply("Invalid input.");
       }
-      const code = message.content.split('```')[1].replace('^.*\n','');
+      const code = "message = arguments[0];\n" + message.content.split('```')[1].replace(/^.*\n/,'');
       var func = new Function(code);
       try {
-        func();
+        func(message);
         message.reply("Done!");
       } catch (err) {
         const error = err.stack.length > 1955 ? err.stack.substring(0,1950) : err.stack;

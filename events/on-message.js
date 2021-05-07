@@ -114,7 +114,7 @@ module.exports = {
             } else if (!roleCache.includes(config.perms.mod)) {
               if (command.perms == "mod") {
                 return message.reply("You do not have the required permissions to use this command; this command is only for server moderators.");
-              } else if (!roleCache.includes(config.perms.user) && message.guild.id != config.guild) {
+              } else if (message.guild.id == config.guild && !roleCache.includes(config.perms.user)) {
                 if (command.perms == "user") {
                   // don't do anything for non-vetted users
                   return;

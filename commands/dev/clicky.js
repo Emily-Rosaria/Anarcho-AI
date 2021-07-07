@@ -6,7 +6,6 @@ module.exports = {
     perms: 'dev', //restricts to users with the "verifed" role noted at config.json
     usage: '', // Help text to explain how to use the command (if it had any arguments)
     execute(message, args) {
-      message.delete({ timeout: 1000 });
       const { MessageButton, MessageActionRow } = require('discord-buttons');
 
       let pub = "";

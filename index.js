@@ -20,6 +20,8 @@ const database = config.dbName; // Database name
 
 const client = new Discord.Client({ws: { intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MESSAGE_TYPING', 'DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS', 'DIRECT_MESSAGE_TYPING']}, partials: ['MESSAGE']}); // Initiates the client
 
+require('discord-buttons')(client);
+
 client.commands = new Discord.Collection(); // Creates an empty list in the client object to store all commands
 
 // function to find all js files in folder+subfolders

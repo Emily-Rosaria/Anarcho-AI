@@ -56,6 +56,13 @@ for (const file of eventFiles) {
     client.events.set(event.name, event);
 }
 
+// load the core buttons into client
+client.buttons = new Discord.Collection();
+const buttonFiles = fs.readdirSync('./buttons').filter(file => file.endsWith('.js'));
+for (const file of buttonFiles) {
+    const button = require(`./buttons/${file}`);
+    client.buttons.set(button.name, button);
+}
 
 // Starts the bot and makes it begin listening for commands.
 client.on('ready', async function() {
@@ -102,18 +109,9 @@ client.on('messageReactionRemoveAll', async (message) => {
 });
 
 client.on('clickButton', async (button) => {
-  await button.clicker.fetch();
-  const uID = button.clicker.user.id;
-  if (button.id === 'click_red') {
-    await button.reply.send(`<@${uID}>, You took the red pill, so that means you are based!`,true);
-  } else if (button.id === 'click_blue') {
-    await button.reply.send(`<@${uID}>, You took the blue pill, so that means you are cringe!`,true);
-  } else if (button.id === 'click_red_pub') {
-    await button.reply.send(`<@${uID}> took the red pill, so that means they are based!`);
-  } else if (button.id === 'click_blue_pub') {
-    await button.reply.send(`<@${uID}> took the blue pill, so that means they are cringe!`);
-  }
+  client.events.get("onButton").event(button);
 });
+
 
 
 connectDB("mongodb://localhost:27017/"+database);

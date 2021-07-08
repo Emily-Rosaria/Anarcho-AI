@@ -63,6 +63,13 @@ module.exports = {
         client.events.set(event.name,event);
       });
 
+      const buttonFunctions = fs.readdirSync('./buttons',{ withFileTypes: true }).filter((f)=>f.name.endsWith('.js'));
+      buttonFunctions.forEach((buttonF) => {
+        delete require.cache[require.resolve('./../../buttons/'+buttonF.name)];
+        const button = require('./../../buttons/'+buttonF.name);
+        client.buttons.set(button.name,button);
+      });
+
       console.log('Events done, now reloading config.');
 
       delete require.cache[require.resolve('./../../config.json')];

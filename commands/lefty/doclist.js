@@ -23,7 +23,7 @@ module.exports = {
         const temp = args.slice(0,Math.max(4,args.length)).map(a=>a.toLowerCase().replace(/[()[\]]/g,''));
         for (var i = 0; i < args.length; i++) {
           const tempArg = temp.shift();
-          const tempID = tempArg.match(/(<@)?!?\d{17,24}>?/);
+          const tempID = tempArg.match(/\d{17,24}/);
           const tempNum = Number(tempArg);
           if (tempID) {
             uID = tempID[0];
@@ -74,7 +74,7 @@ module.exports = {
         repeats = false;
       }
 
-      if (!order || order = "") {
+      if (!order || order == "") {
         if (sort == 'time' || sort == 'popular') {
           order = "d";
         } else {
@@ -115,7 +115,7 @@ module.exports = {
       }
 
       if (sort == 'name' || sort == 'popular') {
-        if (order == "a") {
+        if (order == "a" || sort == 'popular') {
           documents.sort((objA,objB) => {
             return objA.name.localeCompare(objB.name);
           });
@@ -140,14 +140,14 @@ module.exports = {
           });
           if (sort == 'popular') {
             documents = documents.map((d,i)=>[d,i]);
-            if (order == "a") {
+            if (order == "d") {
               documents.sort((objA,objB)=>{
                 if (objA[0].count != objB[0].count) {
                   return (objB[0].count - objA[0].count);
                 }
                 return objA[1] - objB[1];
               });
-            } else if (order == "d") {
+            } else if (order == "a") {
               documents.sort((objA,objB)=>{
                 if (objA[0].count != objB[0].count) {
                   return (objA[0].count - objB[0].count);

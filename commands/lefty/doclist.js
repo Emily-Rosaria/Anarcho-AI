@@ -64,7 +64,7 @@ module.exports = {
         repeats = false;
       } else {
         if (!sort || sort == "") {
-          sort = 'name';
+          sort = 'popular';
         }
       }
 

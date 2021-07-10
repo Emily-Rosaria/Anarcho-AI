@@ -10,46 +10,46 @@ module.exports = {
     perms: 'user',
     allowDM: true,
     args: false,
-    usage: '[@user|all] [a(alphabetical)|t(timestamp)|p(popular)] [+(accending)|-(descending)] [r(repeats)] [page-number]', // Help text to explain how to use the command (if it had any arguments)
+    usage: '[@user|all] [n(name)|t(timestamp)|p(popularity)] [a(accending)|d(descending)] [r(repeats)] [page-number]', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {
 
       let uID = message.author.id;
-      let sort = null;
-      let order = 0;
+      let sort = "";
+      let order = "";
       let repeats = false;
       let pageArg = 1;
 
       if (args && args.length > 0) {
-        const temp = args.slice(0,4).map(a=>a.toLowerCase().replace(/[()[\]]/g,''));
+        const temp = args.slice(0,Math.max(4,args.length)).map(a=>a.toLowerCase().replace(/[()[\]]/g,''));
         for (var i = 0; i < args.length; i++) {
           const tempArg = temp.shift();
           const tempID = tempArg.match(/(<@)?!?\d{17,24}>?/);
+          const tempNum = Number(tempArg);
           if (tempID) {
             uID = tempID[0];
           }
-          if (tempArg=='all') {
+          else if (tempArg=='all') {
             uID = 'all';
           }
-          if (tempArg.startsWith('a') && !tempArg.startsWith('acc')) {
+          else if (tempArg.startsWith('n')) {
             sort = "name";
           }
-          if (tempArg.startsWith('t')) {
+          else if (tempArg.startsWith('t')) {
             sort = "time";
           }
-          if (tempArg.startsWith('p')) {
+          else if (tempArg.startsWith('p')) {
             sort = "popular";
           }
-          if (tempArg.startsWith('acc') || tempArg.startsWith('+')) {
-            order = 1;
+          else if (tempArg.startsWith('a') || tempArg.startsWith('+')) {
+            order = "a";
           }
-          if (tempArg.startsWith('dec') || tempArg.startsWith('-')) {
-            order = -1;
+          else if (tempArg.startsWith('d') || tempArg.startsWith('-')) {
+            order = "d";
           }
-          if (tempArg.startsWith('r')) {
+          else if (tempArg.startsWith('r')) {
             repeats = true;
           }
-          const tempNum = Number(tempArg);
-          if (!isNaN(tempArg) && tempNum < 100000 && tempNum > 1) {
+          else if (!isNaN(tempArg) && tempNum < 100000 && tempNum > 1) {
             pageArg = Math.floor(tempNum);
           }
         }
@@ -58,12 +58,12 @@ module.exports = {
       let query = {};
       if (uID != 'all') {
         query.user = uID;
-        if (sort == 'popular' || sort == null) {
+        if (!sort || sort == "" || sort == 'popular') {
           sort = 'time';
         }
         repeats = false;
       } else {
-        if (sort == null) {
+        if (!sort || sort == "") {
           sort = 'name';
         }
       }
@@ -74,11 +74,11 @@ module.exports = {
         repeats = false;
       }
 
-      if (order = 0) {
-        if (sort = 'time' || sort = 'popular') {
-          order = -1;
+      if (!order || order = "") {
+        if (sort == 'time' || sort == 'popular') {
+          order = "d";
         } else {
-          order = 1;
+          order = "a";
         }
       }
 
@@ -88,14 +88,14 @@ module.exports = {
         if (uID == 'all') {
           return message.reply(`No documents were able to be found. Was there a database error?`);
         }
-        if (uID == message.user.id) {
+        if (uID == message.author.id) {
           return message.reply(`You have no documents saved. Use the \`+newdoc\` command to create some. Or, use \`+doclist all\` to see documents from other users.`);
         }
         return message.reply(`This user has no saved documents. Make sure you either pinged/mentioned them, or used their userID in the command arguments.`);
       }
 
       //map data so we only have what we need, and then sort it
-      let documents = data.map(d=>{
+      var documents = data.map(d=>{
         const obj = {};
         obj.name = d.name;
         obj.user = d.user;
@@ -107,50 +107,67 @@ module.exports = {
 
       if (uID == 'all' && !repeats) {
         // get number of each object
-        counts = documents.reduce((map, title)=>{
+        counts = documents.reduce((map, obj)=>{
           const newMap = map;
-          newMap[title] = (newMap[title]||0)+1;
+          newMap[obj.name] = (newMap[obj.name]||0)+1;
           return newMap;
         }, {});
       }
 
-      if (sort && sort != null) {
-        if (sort == 'name' || sort == 'popular') {
-          documents = documents.sort((objA,objB) => {
-            const textA = objA.name.toUpperCase();
-            const textB = objB.name.toUpperCase();
-            return (textA < textB) ? -(order) : (textA > textB) ? order : 0;
+      if (sort == 'name' || sort == 'popular') {
+        if (order == "a") {
+          documents.sort((objA,objB) => {
+            return objA.name.localeCompare(objB.name);
           });
-          if (!repeats || sort == 'popular') {
-            let lastName = "";
-            documents = documents.reduce((acc,cur) => {
-              if (cur.name == lastName) {
-                return acc;
-              }
-              lastName = cur.name;
-              return acc.concat(cur);
-            },[]).map((obj)=>{
-              const tempObj = {};
-              tempObj.count = counts[obj.name];
-              tempObj.name = obj.name;
-              return tempObj;
-            });
-            if (sort == 'popular') {
-              documents = documents.map((d,i)=>[d,i]).sort((objA,objB)=>{
-                if (objA[0].count != objB[0].count) {
-                  return (objA[0].count - objB[0].count)*order;
-                }
-                return objA[1] - objB[1];
-              }).map(d=>d[0]);
-            }
-          }
-        } else if (sort == 'time') {
-          documents = documents.sort((objA,objB) => {
-            return (objA.id - objB.id)*order;
+        } else if (order == "d") {
+          documents.sort((objA,objB) => {
+            return objB.name.localeCompare(objA.name);
           });
         }
-      } else {
-        return message.reply("Sorting method undefined.");
+        if (!repeats || sort == 'popular') {
+          let lastName = "";
+          documents = documents.reduce((acc,cur) => {
+            if (cur.name == lastName) {
+              return acc;
+            }
+            lastName = cur.name;
+            return acc.concat(cur);
+          },[]).map((obj)=>{
+            const tempObj = {};
+            tempObj.count = counts[obj.name];
+            tempObj.name = obj.name;
+            return tempObj;
+          });
+          if (sort == 'popular') {
+            documents = documents.map((d,i)=>[d,i]);
+            if (order == "a") {
+              documents.sort((objA,objB)=>{
+                if (objA[0].count != objB[0].count) {
+                  return (objB[0].count - objA[0].count);
+                }
+                return objA[1] - objB[1];
+              });
+            } else if (order == "d") {
+              documents.sort((objA,objB)=>{
+                if (objA[0].count != objB[0].count) {
+                  return (objA[0].count - objB[0].count);
+                }
+                return objA[1] - objB[1];
+              });
+            }
+            documents = documents.map(d=>d[0]);
+          }
+        }
+      } else if (sort == 'time') {
+        if (order == "a") {
+          documents.sort((objA,objB) => {
+            return (objB.id - objA.id);
+          });
+        } else if (order == "d") {
+          documents.sort((objA,objB) => {
+            return (objA.id - objB.id);
+          });
+        }
       }
 
       var pages = [];

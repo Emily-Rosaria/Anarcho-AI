@@ -5,6 +5,7 @@ module.exports = {
     name: 'eval', // The name of the command
     description: 'Runs code if user is a dev. Only takes in the message sent as an argument.', // The description of the command (for help text)
     perms: 'dev',
+    group: 'dev',
     allowDM: true,
     usage: '<code>', // Help text to explain how to use the command (if it had any arguments)
     args: true,

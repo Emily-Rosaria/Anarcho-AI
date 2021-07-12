@@ -8,6 +8,7 @@ module.exports = {
     aliases: ['mydocs','listdoc','listdocs'],
     description: 'Lists the names of a user\'s saved documents.', // The description of the command (for help text)
     perms: 'user',
+    group: 'fun',
     allowDM: true,
     args: false,
     usage: '[@user|all] [n(name)|t(timestamp)|p(popularity)] [a(accending)|d(descending)] [r(repeats)] [page-number]', // Help text to explain how to use the command (if it had any arguments)

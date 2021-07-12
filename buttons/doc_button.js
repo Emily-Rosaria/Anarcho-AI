@@ -18,7 +18,7 @@ module.exports = {
     if (!data || !data.documents || !data.documents.has(title)) {
       Docs.find({name: title}, (err,docs)=>{
         if (err || !docs || docs.length == 0) {
-          return button.reply.send(`No saved document found with that name in the database. You'll need to create your own with the \`+newdoc ""${title}"\` command for this button to work.`,true);
+          return button.reply.send(`No saved document found with that name in the database. You'll need to create your own with the \`+newdoc "${title}"\` command for this button to work.`,true);
         }
         let index = Math.floor(docs.length * Math.random());
         const doc = docs[index];

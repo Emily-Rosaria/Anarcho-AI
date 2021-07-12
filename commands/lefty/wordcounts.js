@@ -7,6 +7,7 @@ module.exports = {
     aliases: ['words','counts','wordcount'],
     description: 'Shows a table with the counts of how much a user has said different words. Only displays counts for default words.', // The description of the command (for help text)
     perms: 'user',
+    group: 'fun',
     allowDM: true,
     usage: '[@user]', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {

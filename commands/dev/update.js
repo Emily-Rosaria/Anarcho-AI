@@ -6,6 +6,7 @@ module.exports = {
     description: 'Reloads all the commands and procedures!', // The description of the command (for help text)
     perms: 'dev', //restricts to bot dev only (me)
     allowDM: true,
+    group: 'dev',
     cooldown: 5,
     usage: '', // Help text to explain how to use the command (if it had any arguments)
     execute(message, args) {

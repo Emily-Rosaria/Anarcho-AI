@@ -9,6 +9,7 @@ module.exports = {
     description: 'Adds a text "document" that the bot can repost whenever. Overwrites any doc the user has saved if the name is identical. Pings and mentions are removed, so use plaintext if you wish to reference another user.', // The description of the command (for help text)
     perms: 'user',
     allowDM: true,
+    group: 'fun',
     args: 2,
     usage: '<name> <content>', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {

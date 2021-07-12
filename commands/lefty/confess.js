@@ -9,6 +9,7 @@ module.exports = {
     aliases: ['hottake','anon','anony','anonymous'],
     description: 'Posts a super message in the hot takes channel for you, secretly so no one else will know who sent it. Use this command in DMs with the bot.', // The description of the command (for help text)
     perms: 'user',
+    group: 'fun',
     allowDM: true,
     cooldown: 5,
     usage: '<anonymous-message>', // Help text to explain how to use the command (if it had any arguments)

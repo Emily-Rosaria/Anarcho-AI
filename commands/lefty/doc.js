@@ -8,6 +8,7 @@ module.exports = {
     aliases: ['doc','postdoc','senddoc','saydoc','note','postnote','saynote','sendnote','pasta','copypasta','sendpasta','postpasta','saypasta'],
     description: 'Posts a previously created text document.', // The description of the command (for help text)
     perms: 'user',
+    group: 'fun',
     allowDM: true,
     args: true,
     usage: '<doc-name>', // Help text to explain how to use the command (if it had any arguments)

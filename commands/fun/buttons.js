@@ -4,6 +4,7 @@ module.exports = {
     description: 'Have the bot make post buttons. On-click actions are only visible to button clickers.', // The description of the command (for help text)
     aliases: ['button','newbutton','docbutton'],
     args: true, // Specified that this command doesn't need any data other than the command
+    group: 'fun',
     perms: 'user', //restricts to users with the "verifed" role noted at config.json
     allowDM: false,
     usage: '<message-text>\n<button-1-text> <button-1-doc|button-1-url> [button-1-style|"url"]\n<button-2-text> <button-2-doc|button-2-url> [button-2-style|"url"]\n...', // Help text to explain how to use the command (if it had any arguments)

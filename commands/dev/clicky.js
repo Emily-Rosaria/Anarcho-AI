@@ -4,6 +4,7 @@ module.exports = {
     description: 'Make the bot say random predetermined phrases (this is mostly a test function).', // The description of the command (for help text)
     args: false, // Specified that this command doesn't need any data other than the command
     perms: 'dev', //restricts to users with the "verifed" role noted at config.json
+    group: 'dev',
     usage: '', // Help text to explain how to use the command (if it had any arguments)
     execute(message, args) {
       const { MessageButton, MessageActionRow } = require('discord-buttons');

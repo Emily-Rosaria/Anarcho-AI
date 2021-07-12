@@ -17,6 +17,7 @@ module.exports = {
     description: 'Shows a table with the counts of how much every user has said a certain word.', // The description of the command (for help text)
     perms: 'user',
     args: 1,
+    group: 'fun',
     allowDM: true,
     usage: '<word> [page-number]', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {

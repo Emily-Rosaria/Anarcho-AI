@@ -3,6 +3,7 @@ module.exports = {
     description: 'Sets the bots game status!', // The description of the command (for help text)
     perms: 'dev', //restricts to bot dev only (me)
     allowDM: true,
+    group: 'dev',
     cooldown: 10,
     usage: '[status]', // Help text to explain how to use the command (if it had any arguments)
     execute(message, args) {

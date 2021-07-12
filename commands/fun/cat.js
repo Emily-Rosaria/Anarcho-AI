@@ -10,6 +10,7 @@ module.exports = {
   description: 'Get random cat pics!', // The description of the command (for help text)
   args: false, // Specified that this command doesn't need any data other than the command
   allowDM: true,
+  group: 'images',
   perms: 'user', //restricts to users with the "verifed" role noted at config.json
   usage: '', // Help text to explain how to use the command (if it had any arguments)
   async execute(message, args) {

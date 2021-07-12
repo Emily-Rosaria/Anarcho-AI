@@ -7,6 +7,7 @@ module.exports = {
     description: 'Dumps wordcounts in the console.', // The description of the command (for help text)
     aliases: ['dumpdata','dumpwords'],
     perms: 'dev',
+    group: 'dev',
     allowDM: true,
     usage: '[@user]', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {

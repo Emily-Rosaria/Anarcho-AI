@@ -11,6 +11,7 @@ module.exports = {
     args: false, // Specified that this command doesn't need any data other than the command
     perms: 'user', //restricts to users with the "verifed" role noted at config.json
     allowDM: true,
+    group: 'images',
     usage: '', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {
 

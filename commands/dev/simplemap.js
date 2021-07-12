@@ -45,14 +45,14 @@ function pickHex(color1, color2, weight) {
 module.exports = {
     name: 'simplemap', // The name of the command
     description: 'Test the heightmap code for potential worldgen. The simpler version of the `heightmap` command.', // The description of the command (for help text)
-    args: 1, // Specified that this command doesn't need any data other than the command
+    args: false, // Specified that this command doesn't need any data other than the command
     perms: 'user', //restricts to users with the "verifed" role noted at config.json
-    usage: '<seed> [parameters=a|b] [x-offset] [y-offset]', // Help text to explain how to use the command (if it had any arguments)
+    usage: '[seed] [parameters=a|b] [x-offset] [y-offset]', // Help text to explain how to use the command (if it had any arguments)
     cooldown: 10,
     group: 'maps',
     allowDM: true,
     async execute(message, args) {
-      const seed = args[0];
+      const seed = args.length > 0 ? args[0] : [...Array(10)].map(i=>(~~(Math.random()*36)).toString(36)).join('');
 
       const params = {
         a: {

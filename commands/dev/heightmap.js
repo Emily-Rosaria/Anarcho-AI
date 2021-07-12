@@ -169,7 +169,7 @@ module.exports = {
           .setColor('#2e51a2')
           .setTitle(`Map of ${seed}`)
           .setImage('attachment://heightmap.png')
-          .setFooter(`x: ${offsets[0]}, y: ${offsets[1]}, layers: ${layers}`)
+          .setFooter(`x: ${offsets[0]}, y: ${-offsets[1]}, layers: ${layers}`)
           .setTimestamp()
           message.channel.send({embed: embed, files: [attachment]});
         }).catch(err=>console.err(error));

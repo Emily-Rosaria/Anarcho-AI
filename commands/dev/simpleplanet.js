@@ -66,7 +66,7 @@ module.exports = {
 
       let size = args.length > 1 ? Math.floor(Number(args[1])) || 600 : 600;
 
-      size = Math.max(100,Math.min(1200,size));
+      size = Math.max(100,Math.min(800,size));
 
       let nodes = params.nodes;
       let amps = params.amps;
@@ -154,12 +154,13 @@ module.exports = {
 
         //img.dither565();
         img.getBufferAsync(Jimp.MIME_PNG).then(buffer=>{
-          const attachment = new Discord.MessageAttachment(buffer, 'heightmap.png');
+          const attachment = new Discord.MessageAttachment(buffer, 'planetmap.png');
           const embed = new Discord.MessageEmbed()
           .setColor('#2e51a2')
           .setTitle(`The Planet of ${seed}`)
-          .setImage('attachment://heightmap.png')
-          .setFooter(`Mapping this image onto a sphere will produce a globe map that isn't warped.`)
+          .setDescription("You can view the map on a globe with [This Website](https://www.maptoglobe.com/).")
+          .setImage('attachment://planetmap.png')
+          .setFooter('A 2-dimensional representaion of a planet map.')
           .setTimestamp()
           message.channel.send({embed: embed, files: [attachment]});
         }).catch(err=>console.err(error));

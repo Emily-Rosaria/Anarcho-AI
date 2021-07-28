@@ -3,6 +3,7 @@ const config = require('./../../config.json'); // load bot config
 const adjectives = require('./../../assets/adjectives.json');
 const nouns = require('./../../assets/nouns.json');
 const Discord = require('discord.js'); // Embed stuff
+const Confess = require("./../../database/models/confess.js"); // users model
 
 module.exports = {
     name: 'confess', // The name of the command
@@ -56,6 +57,12 @@ module.exports = {
       .setDescription(anonText)
       .setFooter("An anonymous user submitted this message via the \"confess\" command")
       .setTimestamp();
-      channel.send(embed);
+      const confess_msg = await channel.send(embed);
+
+      await Confess.create({
+        _id: confess_msg.id,
+        content: anonText,
+        user: message.author.id
+      });
     },
 };

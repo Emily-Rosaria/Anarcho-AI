@@ -58,11 +58,12 @@ module.exports = {
       .setFooter("An anonymous user submitted this message via the \"confess\" command")
       .setTimestamp();
       const confess_msg = await channel.send({embeds: [embed]});
-
       await Confess.create({
         _id: confess_msg.id,
         content: anonText,
         user: message.author.id
       });
+
+      message.react('☑️');
     },
 };

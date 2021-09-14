@@ -18,12 +18,12 @@ module.exports = {
       let button = new Discord.MessageButton()
       .setStyle('red')
       .setLabel('Red Pill')
-      .setID('click_red'+pub)
+      .setCustomId('click_red'+pub)
 
       let button2 = new Discord.MessageButton()
       .setStyle('blurple')
       .setLabel('Blue Pill')
-      .setID('click_blue'+pub)
+      .setCustomId('click_blue'+pub)
 
       let row = new Discord.MessageActionRow()
       .addComponents(button, button2);

@@ -8,7 +8,7 @@ module.exports = {
   prefix: "doc_",
   async click(button) {
 
-    const bArgs = button.id.split('_').slice(1);
+    const bArgs = button.customId.split('_').slice(1);
     const uID = bArgs.pop();
     const title = bArgs.join('_');
 

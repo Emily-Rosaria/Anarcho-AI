@@ -46,10 +46,10 @@ module.exports = {
             let url = lineArgs[1].trim().split(' ')[0].replace(/(^<|>$)/g,'');
             btn.setURL(url).setStyle(style);
           } else {
-            btn.setID(`doc_${lineArgs[1]}_${message.author.id}`).setStyle(style);
+            btn.setCustomId(`doc_${lineArgs[1]}_${message.author.id}`).setStyle(style);
           }
         } else {
-          btn.setID(`doc_${lineArgs[1]}_${message.author.id}`).setStyle("grey");
+          btn.setCustomId(`doc_${lineArgs[1]}_${message.author.id}`).setStyle("grey");
         }
         row.addComponents(btn);
       }

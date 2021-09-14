@@ -253,7 +253,7 @@ module.exports = {
         return true;
       };
 
-      const collector = msg.createReactionCollector(filter, { idle: 300000, dispose: true });
+      const collector = msg.createReactionCollector({filter, idle: 300000, dispose: true });
 
       const right = async (pg) => {
         let newPage =  (((pg+1) % pagecount ) + pagecount ) % pagecount;

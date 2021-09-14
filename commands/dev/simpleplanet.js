@@ -162,7 +162,7 @@ module.exports = {
           .setImage('attachment://planetmap.png')
           .setFooter('A 2-dimensional representaion of a planet map.')
           .setTimestamp()
-          message.channel.send({embed: embed, files: [attachment]});
+          message.channel.send({embeds: [embed], files: [attachment]});
         }).catch(err=>console.err(error));
       });
     },

@@ -8,7 +8,6 @@ const Booru = require('booru'); // This lets me get stuff from weeb sites.
 const fs = require('fs'); // Loads the Filesystem library
 const path = require("path"); // Resolves file paths
 const Discord = require('discord.js'); // Loads the discord API library
-const Canvas = require('canvas'); // Pretty pictures
 const readline = require('readline');
 const {google} = require('googleapis');
 
@@ -18,9 +17,7 @@ const mongoose = require("mongoose"); //database library
 const connectDB = require("./database/connectDB.js"); // Database connection
 const database = config.dbName; // Database name
 
-const client = new Discord.Client({ws: { intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MESSAGE_TYPING', 'DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS', 'DIRECT_MESSAGE_TYPING']}, partials: ['MESSAGE']}); // Initiates the client
-
-require('discord-buttons')(client);
+const client = new Discord.Client({intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MESSAGE_TYPING', 'DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS', 'DIRECT_MESSAGE_TYPING'], partials: ['MESSAGE']}); // Initiates the client
 
 client.commands = new Discord.Collection(); // Creates an empty list in the client object to store all commands
 
@@ -70,9 +67,9 @@ client.on('ready', async function() {
     console.log(`${client.user.username} is up and running! Launched at: ${(new Date()).toUTCString()}.`);
 });
 
-client.on('message', async message => {
+client.on('messageCreate', async message => {
     if (message && message.author && message.author.bot) {
-      if (message.channel.type != "dm") {
+      if (message.channel.type != "DM") {
         client.events.get("onWordcount").event(message);
       }
       return; // don't respond to bots aside from counting their word usage
@@ -109,7 +106,7 @@ client.on('messageReactionRemoveAll', async (message) => {
 });
 
 client.on('clickButton', async (button) => {
-  client.events.get("onButton").event(button);
+    client.events.get("onButton").event(button);
 });
 
 

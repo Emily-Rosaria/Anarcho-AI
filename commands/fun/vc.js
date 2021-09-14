@@ -14,6 +14,6 @@ module.exports = {
           .setColor('#EDEDED')
           .setImage('attachment://bernie-vc.png')
           .setTitle(`${message.member.displayName} needs your help!`)
-        message.channel.send({files: [attachment], embed: embed});
+        message.channel.send({files: [attachment], embeds: [embed]});
     },
 };

@@ -18,24 +18,26 @@ module.exports = {
           files.forEach((file) => {
               if (file.isDirectory()) {
                   const newCmds = fs.readdirSync(dir+'/'+file.name);
-                  fileArray = fileArray.concat(newCmds.map((f) => './../' + file.name + '/' + f).filter((f)=>f.endsWith('.js')));
-              } else if (file.name.endsWith('.js')) {
+                  fileArray = fileArray.concat(newCmds.map((f) => './../' + file.name + '/' + f));
+              } else {
                   fileArray = fileArray.concat(['./../'+file.name]);
               }
           });
           return fileArray;
       };
-      const commandFiles = getAllCommands('./commands').filter(file => file.endsWith('.js'));
+      const commandFiles = getAllCommands('./commands');
       // Loops over each file in the command folder and sets the commands to respond to their name
       for (const file of commandFiles) {
           delete require.cache[require.resolve(file)];
-          const command = require(file);
-          client.commands.set(command.name, command);
+          if (file.endsWith('.js')) {
+            const command = require(file);
+            client.commands.set(command.name, command);
+          }
       }
 
       // Deletes commands that don't exist
       const keys = Array.from(client.commands.keys());
-      const validCommands = commandFiles.map(x => require(x).name);
+      const validCommands = commandFiles.filter(file => file.endsWith('.js')).map(x => require(x).name);
       console.log('New valid command list:');
       console.log(validCommands);
       for (const key of keys) {

@@ -123,14 +123,14 @@ module.exports = {
       const right = async (pg) => {
         let newPage =  (((pg+1) % pagecount ) + pagecount ) % pagecount;
         embed = getEmbed(newPage);
-        msg.edit(embed);
+        msg.edit({embeds: [embed]});
         return newPage;
       }
 
       const left = async (pg) => {
         let newPage =  (((pg-1) % pagecount ) + pagecount ) % pagecount;
         embed = getEmbed(newPage);
-        msg.edit(embed);
+        msg.edit({embeds: [embed]});
         return newPage;
       }
 

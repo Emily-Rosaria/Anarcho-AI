@@ -23,7 +23,7 @@ module.exports = {
       }
       if (url) {
         const embed = new Discord.MessageEmbed().setImage(url).setTitle('Woof').setFooter('Source: dog.ceo/api').setTimestamp();
-        message.reply(embed); // Replies to the user with a random dog
+        message.reply({embeds: [embed]}); // Replies to the user with a random dog
       } else {
         message.reply("I'm having trouble fetching images from the `dog.ceo` API right now. Try again in a moment.");
       }

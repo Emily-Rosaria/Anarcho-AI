@@ -15,7 +15,7 @@ module.exports = {
     cooldown: 5,
     usage: '<anonymous-message>', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {
-      if (message.channel.type != "dm") {
+      if (message.channel.type != "DM") {
         return message.reply("This command only works in DMs. Message the bot directly to use it. For example, you might send the bot this message:\n> \"`+confess I actually like some Bri'ish accents.`\"");
       } else if (args.length == 0) {
         return message.reply("That command requires more details!\nThe proper usage would be: `+confess <anonymous-message>`.");
@@ -57,7 +57,7 @@ module.exports = {
       .setDescription(anonText)
       .setFooter("An anonymous user submitted this message via the \"confess\" command")
       .setTimestamp();
-      const confess_msg = await channel.send(embed);
+      const confess_msg = await channel.send({embeds: [embed]});
 
       await Confess.create({
         _id: confess_msg.id,

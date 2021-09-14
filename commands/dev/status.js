@@ -10,7 +10,7 @@ module.exports = {
       var status = { status: 'online' };
       if (args && args.length > 0) {
         const gameName = args.join(' ').length > 31 ? args.join(' ').slice(0,30) + '...' : args.join(' ');
-        status.activity = { type: 'PLAYING', name: gameName };
+        status.activities = [{ type: 'PLAYING', name: gameName }];
       }
       message.client.user.setPresence(status);
     },

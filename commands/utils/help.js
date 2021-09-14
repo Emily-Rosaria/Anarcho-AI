@@ -103,6 +103,6 @@ module.exports = {
         } else {
           embed.addField("Usage","```\n"+prefix+command.name+"\n```");
         }
-        message.channel.send(embed);
+        message.channel.send({embeds: [embed]});
     },
 };

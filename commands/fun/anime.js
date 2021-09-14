@@ -25,7 +25,7 @@ module.exports = {
           .setImage(image[0].fileUrl)
           .setFooter('Image from safebooru')
           .setTimestamp()
-          return message.reply(embed);
+          return message.reply({embeds: [embed]});
         })
         .catch(error => {
           message.reply('Unable to fetch an image. Try again in a few minutes, or check that images with any tag you added exist.');

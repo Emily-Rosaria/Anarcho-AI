@@ -17,10 +17,10 @@ module.exports = {
     const client = message.client;
 
     // get cached roles of a user
-    const roleCache = message.channel.type != "dm" && message.member && message.member.roles && message.member.roles.cache ? [...message.member.roles.cache.keys()] || [] : [];
+    const roleCache = message.channel.type != "DM" && message.member && message.member.roles && message.member.roles.cache ? [...message.member.roles.cache.keys()] || [] : [];
 
     // Run the word count code for the message if the poster has the "user" perms and the server is correct
-    if ((message.channel.type != "dm") && (message.guild.id == config.guild)) {
+    if ((message.channel.type != "DM") && (message.guild.id == config.guild)) {
       try {
         client.events.get("onWordcount").event(message);
       } catch (err) {
@@ -30,7 +30,7 @@ module.exports = {
 
     const botPing = ["<@" + client.user.id + ">","<@!" + client.user.id + ">"];
 
-    const dmExtraPrefix = (message.channel.type == "dm") ? ["!","?","$","-"] : ["XXX"];
+    const dmExtraPrefix = (message.channel.type == "DM") ? ["!","?","$","-"] : ["XXX"];
     // Find if message begins with a valid command prefix
     const prefix = config.prefix.concat(botPing).concat(dmExtraPrefix).filter(p => message.content.toLowerCase().startsWith(p));
 
@@ -98,7 +98,7 @@ module.exports = {
       }
 
       //manage dm commands
-      if (message.channel.type == "dm") {
+      if (message.channel.type == "DM") {
         if (!command.allowDM) {
           return message.reply("This command is not available for use in DMs.");
         }
@@ -137,7 +137,7 @@ module.exports = {
       const devUser = client.users.cache.get(config.perms.dev);
       const msg = (message.content.length > 200) ? message.content.slice(0,200) + ' [...]' : message.content;
       const errmsg = (error.stack.toString().length > 1500) ? error.stack.toString().slice(0,1500) + '...' : error.stack;
-      const errLocation = message.channel.type == "dm" ? 'in `Direct Messages`' : 'from `'+message.channel.name+'`';
+      const errLocation = message.channel.type == "DM" ? 'in `Direct Messages`' : 'from `'+message.channel.name+'`';
       devUser.send('Error running command: `'+msg+'`\nSender: `'+message.author.username+'#'+message.author.discriminator+'` '+errLocation+'\nError Report:\n```'+errmsg+'```');
     }
   },

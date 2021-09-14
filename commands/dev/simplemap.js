@@ -168,7 +168,7 @@ module.exports = {
           .setImage('attachment://heightmap.png')
           .setFooter(`x: ${offsets[0]}, y: ${-offsets[1]}, type: ${type}`)
           .setTimestamp()
-          message.channel.send({embed: embed, files: [attachment]});
+          message.channel.send({embeds: [embed], files: [attachment]});
         }).catch(err=>console.err(error));
       });
     },

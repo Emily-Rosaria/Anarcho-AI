@@ -28,7 +28,8 @@ module.exports = {
       if (!channel) {
         return message.reply("I'm having trouble finding the confession/\"hot takes\" channel. Make sure it's visible and available to bots and users.");
       }
-      var perms = channel.permissionsFor(message.author.id);
+      var member = await guild.members.fetch(message.author.id)
+      var perms = channel.permissionsFor(member);
       if (!perms) {
         return message.reply("I'm having trouble checking your permissions for the confessions channel. Try again later, and check you have permission to type there. If the problem persists, try sending a message on the discord server.");
       } else if (!perms.has("VIEW_CHANNEL") || !perms.has("SEND_MESSAGES")) {

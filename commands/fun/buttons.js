@@ -1,3 +1,4 @@
+const Discord = require('discord.js'); // Image embed
 
 module.exports = {
     name: 'buttons', // The name of the command
@@ -9,7 +10,6 @@ module.exports = {
     allowDM: false,
     usage: '<message-text>\n<button-1-text> <button-1-doc|button-1-url> [button-1-style|"url"]\n<button-2-text> <button-2-doc|button-2-url> [button-2-style|"url"]\n...', // Help text to explain how to use the command (if it had any arguments)
     execute(message, args) {
-      const { MessageButton, MessageActionRow } = require('discord-buttons');
 
       function getColor(colour) {
         if (["red","orange","danger","deny","warning","destructive"].includes(colour)) {
@@ -33,11 +33,11 @@ module.exports = {
 
       let hasURL = false;
 
-      let row = new MessageActionRow()
+      let row = new Discord.MessageActionRow()
 
       for (const line of lines) {
         lineArgs = line.match(/("[^"\n]+"|\S+)/g).map(l=>l.replace(/"/g,''));
-        let btn = new MessageButton()
+        let btn = new Discord.MessageButton()
         .setLabel(lineArgs[0])
         if (lineArgs.length > 2) {
           const style = getColor(lineArgs[2].toLowerCase());

@@ -1,3 +1,4 @@
+const Discord = require('discord.js'); // Image embed
 
 module.exports = {
     name: 'clicky', // The name of the command
@@ -7,7 +8,6 @@ module.exports = {
     group: 'dev',
     usage: '', // Help text to explain how to use the command (if it had any arguments)
     execute(message, args) {
-      const { MessageButton, MessageActionRow } = require('discord-buttons');
 
       let pub = "";
 
@@ -15,17 +15,17 @@ module.exports = {
         pub = "_pub";
       }
 
-      let button = new MessageButton()
+      let button = new Discord.MessageButton()
       .setStyle('red')
       .setLabel('Red Pill')
       .setID('click_red'+pub)
 
-      let button2 = new MessageButton()
+      let button2 = new Discord.MessageButton()
       .setStyle('blurple')
       .setLabel('Blue Pill')
       .setID('click_blue'+pub)
 
-      let row = new MessageActionRow()
+      let row = new Discord.MessageActionRow()
       .addComponents(button, button2);
 
       message.channel.send('What pill do you take?', row);

@@ -28,7 +28,7 @@ module.exports = {
           let index = Math.floor(docs.length * Math.random());
           const doc = docs[index];
           if (doc.content) {
-            return message.channel.send(doc.content,{disableMentions:"all"});
+            return message.channel.send(doc.content,{allowedMentions: { repliedUser: false }});
           } else {
             return message.reply("Error with the database. No document content.");
           }
@@ -42,7 +42,7 @@ module.exports = {
           if (err) {console.error(err);}
         }
         if (doc.content) {
-          return message.channel.send(doc.content,{disableMentions:"all"});
+          return message.channel.send(doc.content,{allowedMentions: { repliedUser: false }});
         } else {
           return message.reply("Error with the database. No document content.");
         }

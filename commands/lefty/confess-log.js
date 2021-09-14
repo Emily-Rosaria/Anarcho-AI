@@ -10,7 +10,7 @@ module.exports = {
     aliases: ['spy','confesslog'],
     description: 'Shows who posted a confession.', // The description of the command (for help text)
     perms: 'dev',
-    group: 'lefty',
+    group: 'dev',
     allowDM: true,
     cooldown: 5,
     usage: '<message-id>', // Help text to explain how to use the command (if it had any arguments)

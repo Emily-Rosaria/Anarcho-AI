@@ -234,7 +234,7 @@ module.exports = {
       currentPage = currentPage - 1;
 
       // post doc embed
-      var msg = await message.channel.send(getEmbed(currentPage));
+      var msg = await message.channel.send({embeds:[getEmbed(currentPage)]});
 
       // don't add reacts or anything if there's no other pages
       if (pagecount < 2) {

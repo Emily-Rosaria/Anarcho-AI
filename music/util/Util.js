@@ -10,13 +10,7 @@ exports.canModifyQueue = (member) => {
   return true;
 };
 
-let config;
-
-try {
-  config = require("./../../config.json");
-} catch (error) {
-  config = null;
-}
+let config = require("./../../config.json");
 
 exports.YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 exports.TOKEN = process.env.TOKEN;

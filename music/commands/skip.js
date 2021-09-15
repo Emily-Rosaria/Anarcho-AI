@@ -12,12 +12,12 @@ module.exports = {
   data: data,
   description: i18n.__("skip.description"),
   execute(message) {
-    const queue = message.client.queue.get(message.guild.id);
-    if (!queue) return message.reply(i18n.__("skip.errorNotQueue")).catch(console.error);
-    if (!canModifyQueue(message.member)) return i18n.__("common.errorNotChannel");
+    const queue = message.client.queue.get(message.guildId);
+    if (!queue) return message.reply({content: i18n.__("skip.errorNotQueue"), ephemeral: true}).catch(console.error);
+    if (!canModifyQueue(message.member)) return message.reply({content: i18n.__("common.errorNotChannel"), ephemeral: true});
 
     queue.playing = true;
     queue.connection.dispatcher.end();
-    queue.textChannel.send(i18n.__mf("skip.result", { author: message.author })).catch(console.error);
+    queue.textChannel.send(i18n.__mf("skip.result", { author: message.member.id })).catch(console.error);
   }
 };

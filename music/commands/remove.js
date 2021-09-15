@@ -18,7 +18,7 @@ module.exports = {
   aliases: ["rm"],
   description: i18n.__("remove.description"),
   execute(message) {
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = message.client.queue.get(message.guildId);
     const args = [message.getInteger('queue-id')];
     if (!queue) return message.channel.send(i18n.__("remove.errorNotQueue")).catch(console.error);
     if (!canModifyQueue(message.member)) return i18n.__("common.errorNotChannel");
@@ -37,7 +37,7 @@ module.exports = {
       queue.textChannel.send(
         i18n.__mf("remove.result", {
           title: removed.map((song) => song.title).join("\n"),
-          author: message.author.id
+          author: message.member.id
         })
       );
     } else if (!isNaN(args[0]) && args[0] >= 1 && args[0] <= queue.songs.length) {
@@ -45,12 +45,12 @@ module.exports = {
       return queue.textChannel.send(
         i18n.__mf("remove.result", {
           title: queue.songs.splice(args[0] - 1, 1)[0].title,
-          author: message.author.id
+          author: message.member.id
         })
       );
     } else {
       console.log("we got the last one");
-      return message.reply(i18n.__mf("remove.usageReply", { prefix: message.client.prefix }));
+      return message.reply({content: i18n.__mf("remove.usageReply", { prefix: message.client.prefix }), ephemeral: true});
     }
   }
 };

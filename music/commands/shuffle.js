@@ -11,9 +11,9 @@ module.exports = {
   data: data,
   description: i18n.__("shuffle.description"),
   execute(message) {
-    const queue = message.client.queue.get(message.guild.id);
-    if (!queue) return message.channel.send(i18n.__("shuffle.errorNotQueue")).catch(console.error);
-    if (!canModifyQueue(message.member)) return i18n.__("common.errorNotChannel");
+    const queue = message.client.queue.get(message.guildId);
+    if (!queue) return message.reply({content: i18n.__("shuffle.errorNotQueue"), ephemeral: true}).catch(console.error);
+    if (!canModifyQueue(message.member)) return message.reply({content: i18n.__("common.errorNotChannel"), ephemeral: true});
 
     let songs = queue.songs;
     for (let i = songs.length - 1; i > 1; i--) {
@@ -21,7 +21,7 @@ module.exports = {
       [songs[i], songs[j]] = [songs[j], songs[i]];
     }
     queue.songs = songs;
-    message.client.queue.set(message.guild.id, queue);
-    queue.textChannel.send(i18n.__mf("shuffle.result", { author: message.author })).catch(console.error);
+    message.client.queue.set(message.guildId, queue);
+    queue.textChannel.send(i18n.__mf("shuffle.result", { author: message.member.id })).catch(console.error);
   }
 };

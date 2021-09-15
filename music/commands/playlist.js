@@ -24,7 +24,7 @@ module.exports = {
   description: i18n.__("playlist.description"),
   async execute(message) {
     const { channel } = message.member.voice;
-    const serverQueue = message.client.queue.get(message.guild.id);
+    const serverQueue = message.client.queue.get(message.guildId);
 
     const args = [message.getString('playlist')];
 
@@ -32,7 +32,7 @@ module.exports = {
       return message
         .reply(i18n.__mf("playlist.usageReply", { prefix: message.client.prefix }))
         .catch(console.error);
-    if (!channel) return message.reply(i18n.__("playlist.errorNotChannel")).catch(console.error);
+    if (!channel) return message.reply({content: i18n.__("playlist.errorNotChannel"), ephemeral: true}).catch(console.error);
 
     const permissions = channel.permissionsFor(message.client.user);
     if (!permissions.has("CONNECT")) return message.reply(i18n.__("playlist.missingPermissionConnect"));
@@ -114,10 +114,10 @@ module.exports = {
       playlistEmbed.description =
         playlistEmbed.description.substr(0, 2007) + i18n.__("playlist.playlistCharLimit");
 
-    message.channel.send(i18n.__mf("playlist.startedPlaylist", { author: message.author }), playlistEmbed);
+    message.channel.send({content: i18n.__mf("playlist.startedPlaylist", { author: message.member.id }), embeds: [playlistEmbed]});
 
     if (!serverQueue) {
-      message.client.queue.set(message.guild.id, queueConstruct);
+      message.client.queue.set(message.guildId, queueConstruct);
 
       try {
         queueConstruct.connection = await channel.join();
@@ -125,9 +125,9 @@ module.exports = {
         play(queueConstruct.songs[0], message);
       } catch (error) {
         console.error(error);
-        message.client.queue.delete(message.guild.id);
+        message.client.queue.delete(message.guildId);
         await channel.leave();
-        return message.channel.send(i18n.__mf("play.cantJoinChannel", { error: error })).catch(console.error);
+        return message.channel.send({content: i18n.__mf("play.cantJoinChannel", { error: error }), ephemeral: true}).catch(console.error);
       }
     }
   }

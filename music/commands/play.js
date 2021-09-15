@@ -1,5 +1,5 @@
 const i18n = require("../util/i18n");
-const { play } = require("../include/play");
+const { play } = require("../include/play.js");
 const ytdl = require("ytdl-core");
 const YouTubeAPI = require("simple-youtube-api");
 const scdl = require("soundcloud-downloader").default;
@@ -22,12 +22,12 @@ module.exports = {
   cooldown: 3,
   aliases: ["p"],
   description: i18n.__("play.description"),
-  async execute(message) {
+  async execute(message, choice) {
     const { channel } = message.member.voice;
 
-    const args = [message.getString('song')];
+    const args = choice.length ? choice : [message.getString('song')];
 
-    const serverQueue = message.client.queue.get(message.guild.id);
+    const serverQueue = message.client.queue.get(message.guildId);
 
     if (!channel) return message.reply(i18n.__("play.errorNotChannel")).catch(console.error);
 
@@ -138,12 +138,12 @@ module.exports = {
     if (serverQueue) {
       serverQueue.songs.push(song);
       return serverQueue.textChannel
-        .send(i18n.__mf("play.queueAdded", { title: song.title, author: message.author }))
+        .send(i18n.__mf("play.queueAdded", { title: song.title, author: message.member.id }))
         .catch(console.error);
     }
 
     queueConstruct.songs.push(song);
-    message.client.queue.set(message.guild.id, queueConstruct);
+    message.client.queue.set(message.guildId, queueConstruct);
 
     try {
       queueConstruct.connection = await channel.join();
@@ -151,7 +151,7 @@ module.exports = {
       play(queueConstruct.songs[0], message);
     } catch (error) {
       console.error(error);
-      message.client.queue.delete(message.guild.id);
+      message.client.queue.delete(message.guildId);
       await channel.leave();
       return message.channel.send(i18n.__mf("play.cantJoinChannel", { error: error })).catch(console.error);
     }

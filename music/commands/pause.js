@@ -11,7 +11,7 @@ module.exports = {
   data: data,
   description: i18n.__("pause.description"),
   execute(message) {
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = message.client.queue.get(message.guildId);
     if (!queue) return message.reply(i18n.__("pause.errorNotQueue")).catch(console.error);
     if (!canModifyQueue(message.member)) return i18n.__("common.errorNotChannel");
 
@@ -19,7 +19,7 @@ module.exports = {
       queue.playing = false;
       queue.connection.dispatcher.pause(true);
       return queue.textChannel
-        .send(i18n.__mf("pause.result", { author: message.author }))
+        .send(i18n.__mf("pause.result", { author: message.member.id }))
         .catch(console.error);
     }
   }

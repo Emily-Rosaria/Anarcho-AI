@@ -12,7 +12,7 @@ module.exports = {
   data: data,
   description: i18n.__("nowplaying.description"),
   execute(message) {
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = message.client.queue.get(message.guildId);
     if (!queue) return message.reply(i18n.__("nowplaying.errorNotQueue")).catch(console.error);
 
     const song = queue.songs[0];
@@ -40,6 +40,6 @@ module.exports = {
       );
     }
 
-    return message.channel.send(nowPlaying);
+    return message.reply({embeds: [nowPlaying], ephemeral: true});
   }
 };

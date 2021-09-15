@@ -4,13 +4,14 @@
 const { Collection } = require("discord.js");
 const { readdirSync } = require("fs");
 const { join } = require("path");
-const { TOKEN, PREFIX, GUILD } = require("./util/Util");
+const { TOKEN, PREFIX, GUILD, DEFAULT_VOLUME } = require("./util/Util");
 const i18n = require("./util/i18n");
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
 module.exports = async function(client) {
   client.queue = new Map();
+  //client.volume = DEFAULT_VOLUME;
   const cooldowns = new Collection();
   const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -24,10 +25,12 @@ module.exports = async function(client) {
    * Import all commands
    */
   const commandFiles = readdirSync(join(__dirname, "commands")).filter((file) => file.endsWith(".js"));
-  const clientId = client.bot.id;
+  const clientId = client.user.id;
   const guildId = GUILD;
 
   client.slashCommands = new Collection();
+
+  const commands = [];
 
   for (const file of commandFiles) {
   	const command = require(`./commands/${file}`);
@@ -35,7 +38,7 @@ module.exports = async function(client) {
     client.slashCommands.set(command.data.name, command);
   }
 
-  const rest = new REST({ version: '9' }).setToken(token);
+  const rest = new REST({ version: '9' }).setToken(TOKEN);
 
   (async () => {
   	try {
@@ -65,8 +68,8 @@ module.exports = async function(client) {
     const timestamps = cooldowns.get(command.name);
     const cooldownAmount = (command.cooldown || 1) * 1000;
 
-    if (timestamps.has(message.author.id)) {
-      const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+    if (timestamps.has(interaction.member.id)) {
+      const expirationTime = timestamps.get(interaction.member.id) + cooldownAmount;
 
       if (now < expirationTime) {
         const timeLeft = (expirationTime - now) / 1000;
@@ -74,10 +77,10 @@ module.exports = async function(client) {
       }
     }
 
-    timestamps.set(message.author.id, now);
-    setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+    timestamps.set(interaction.member.id, now);
+    setTimeout(() => timestamps.delete(interaction.member.id), cooldownAmount);
     try {
-        await command.execute(interaction);
+        await command.execute(interaction,[]);
     } catch (error) {
         if (error) console.error(error);
         await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });

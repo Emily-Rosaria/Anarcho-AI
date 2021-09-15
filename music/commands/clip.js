@@ -15,13 +15,13 @@ module.exports = {
   description: i18n.__("clip.description"),
   async execute(message) {
     const { channel } = message.member.voice;
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = message.client.queue.get(message.guildId);
 
     const args = [message.getString('clip')];
 
-    if (!args.length) return message.reply(i18n.__("clip.usagesReply")).catch(console.error);
-    if (queue) return message.reply(i18n.__("clip.errorQueue"));
-    if (!channel) return message.reply(i18n.__("clip.errorNotChannel")).catch(console.error);
+    if (!args.length) return message.reply({content: i18n.__("clip.usagesReply"), ephemeral: true}).catch(console.error);
+    if (queue) return message.reply({content: i18n.__("clip.errorQueue"), ephemeral: true});
+    if (!channel) return message.reply({content: i18n.__("clip.errorNotChannel"), ephemeral: true}).catch(console.error);
 
     const queueConstruct = {
       textChannel: message.channel,
@@ -34,18 +34,18 @@ module.exports = {
       playing: true
     };
 
-    message.client.queue.set(message.guild.id, queueConstruct);
+    message.client.queue.set(message.guildId, queueConstruct);
 
     try {
       queueConstruct.connection = await channel.join();
       const dispatcher = queueConstruct.connection
         .play(`./sounds/${args[0]}.mp3`)
         .on("finish", () => {
-          message.client.queue.delete(message.guild.id);
+          message.client.queue.delete(message.guildId);
           channel.leave();
         })
         .on("error", (err) => {
-          message.client.queue.delete(message.guild.id);
+          message.client.queue.delete(message.guildId);
           channel.leave();
           console.error(err);
         });

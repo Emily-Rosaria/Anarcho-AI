@@ -9,7 +9,7 @@ const data = new SlashCommandBuilder()
 	.addIntegerOption(option =>
 		option.setName('queue-id-1')
 			.setDescription('The first song to move.')
-			.setRequired(true));
+			.setRequired(true))
   .addIntegerOption(option =>
 		option.setName('queue-id-2')
 			.setDescription('The song to swap it with.')
@@ -25,7 +25,7 @@ module.exports = {
     if (message.getInteger('queue-id-2')) {
       args.push(message.getInteger('queue-id-2'));
     }
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = message.client.queue.get(message.guildId);
     if (!queue) return message.channel.send(i18n.__("move.errorNotQueue")).catch(console.error);
     if (!canModifyQueue(message.member)) return;
 
@@ -38,7 +38,7 @@ module.exports = {
     queue.songs = move(queue.songs, args[0] - 1, args[1] == 1 ? 1 : args[1] - 1);
     queue.textChannel.send(
       i18n.__mf("move.result", {
-        author: message.author,
+        author: message.member.id,
         title: song.title,
         index: args[1] == 1 ? 1 : args[1]
       })

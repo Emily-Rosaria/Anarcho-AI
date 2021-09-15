@@ -21,11 +21,11 @@ module.exports = {
     const args = [message.getString('search-query')];
     if (!args.length)
       return message
-        .reply(i18n.__mf("search.usageReply", { prefix: message.client.prefix, name: module.exports.name }))
+        .reply({content: i18n.__mf("search.usageReply", { prefix: message.client.prefix, name: module.exports.name }), ephemeral: true})
         .catch(console.error);
     if (message.channel.activeCollector) return message.reply(i18n.__("search.errorAlreadyCollector"));
     if (!message.member.voice.channel)
-      return message.reply(i18n.__("search.errorNotChannel")).catch(console.error);
+      return message.reply({content: i18n.__("search.errorNotChannel"), ephemeral: true}).catch(console.error);
 
     const search = args.join(" ");
 
@@ -38,7 +38,7 @@ module.exports = {
       const results = await youtube.searchVideos(search, 10);
       results.map((video, index) => resultsEmbed.addField(video.shortURL, `${index + 1}. ${video.title}`));
 
-      let resultsMessage = await message.channel.send(resultsEmbed);
+      let resultsMessage = await message.channel.send({embeds: [resultsEmbed]});
 
       function filter(msg) {
         const pattern = /^[0-9]{1,2}(\s*,\s*[0-9]{1,2})*$/;
@@ -53,13 +53,13 @@ module.exports = {
         let songs = reply.split(",").map((str) => str.trim());
 
         for (let song of songs) {
-          await message.client.commands
+          await message.client.musicCommands
             .get("play")
             .execute(message, [resultsEmbed.fields[parseInt(song) - 1].name]);
         }
       } else {
         const choice = resultsEmbed.fields[parseInt(response.first()) - 1].name;
-        message.client.commands.get("play").execute(message, [choice]);
+        message.client.musicCommands.get("play").execute(message, [choice]);
       }
 
       message.channel.activeCollector = false;
@@ -68,7 +68,7 @@ module.exports = {
     } catch (error) {
       console.error(error);
       message.channel.activeCollector = false;
-      message.reply(error.message).catch(console.error);
+      //message.reply(error.message).catch(console.error);
     }
   }
 };

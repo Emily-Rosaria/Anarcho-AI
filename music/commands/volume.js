@@ -16,7 +16,7 @@ module.exports = {
   aliases: ["v"],
   description: i18n.__("volume.description"),
   execute(message) {
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = message.client.queue.get(message.guildId);
     const args = [message.getInteger('volume')];
 
     if (!queue) return message.reply(i18n.__("volume.errorNotQueue")).catch(console.error);

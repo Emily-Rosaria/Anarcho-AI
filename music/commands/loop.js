@@ -12,9 +12,9 @@ module.exports = {
   data: data,
   description: i18n.__("loop.description"),
   execute(message) {
-    const queue = message.client.queue.get(message.guild.id);
-    if (!queue) return message.reply(i18n.__("loop.errorNotQueue")).catch(console.error);
-    if (!canModifyQueue(message.member)) return i18n.__("common.errorNotChannel");
+    const queue = message.client.queue.get(message.guildId);
+    if (!queue) return message.reply({content: i18n.__("loop.errorNotQueue"), ephemeral: true}).catch(console.error);
+    if (!canModifyQueue(message.member)) return message.reply({content: i18n.__("common.errorNotChannel"), ephemeral: true});
 
     // toggle from false to true and reverse
     queue.loop = !queue.loop;

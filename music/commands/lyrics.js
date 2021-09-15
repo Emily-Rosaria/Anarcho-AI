@@ -13,7 +13,7 @@ module.exports = {
   data: data,
   description: i18n.__("lyrics.description"),
   async execute(message) {
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = message.client.queue.get(message.guildId);
     if (!queue) return message.channel.send(i18n.__("lyrics.errorNotQueue")).catch(console.error);
 
     let lyrics = null;
@@ -31,8 +31,8 @@ module.exports = {
       .setColor("#F8AA2A")
       .setTimestamp();
 
-    if (lyricsEmbed.description.length >= 2048)
-      lyricsEmbed.description = `${lyricsEmbed.description.substr(0, 2045)}...`;
-    return message.channel.send(lyricsEmbed).catch(console.error);
+    if (lyricsEmbed.description.length >= 4048)
+      lyricsEmbed.description = `${lyricsEmbed.description.substr(0, 4045)}...`;
+    return message.channel.send({embeds: [lyricsEmbed]}).catch(console.error);
   }
 };

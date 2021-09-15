@@ -21,10 +21,10 @@ module.exports = {
 
     if (!args.length || isNaN(args[0]))
       return message
-        .reply(i18n.__mf("skipto.usageReply", { prefix: message.client.prefix, name: module.exports.name }))
+        .reply({content: i18n.__mf("skipto.usageReply", { prefix: message.client.prefix, name: module.exports.name }), ephemeral: true})
         .catch(console.error);
 
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = message.client.queue.get(message.guildId);
     if (!queue) return message.channel.send(i18n.__("skipto.errorNotQueue")).catch(console.error);
     if (!canModifyQueue(message.member)) return i18n.__("common.errorNotChannel");
     if (args[0] > queue.songs.length)
@@ -44,7 +44,7 @@ module.exports = {
 
     queue.connection.dispatcher.end();
     queue.textChannel
-      .send(i18n.__mf("skipto.result", { author: message.author, arg: args[0] - 1 }))
+      .send(i18n.__mf("skipto.result", { author: message.member.id, arg: args[0] - 1 }))
       .catch(console.error);
   }
 };

@@ -17,16 +17,13 @@ module.exports = {
     if (!permissions.has(["MANAGE_MESSAGES", "ADD_REACTIONS"]))
       return message.reply(i18n.__("queue.missingPermissionMessage"));
 
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = message.client.queue.get(message.guildId);
     if (!queue) return message.channel.send(i18n.__("queue.errorNotQueue"));
 
     let currentPage = 0;
     const embeds = generateQueueEmbed(message, queue.songs);
 
-    const queueEmbed = await message.channel.send(
-      `**${i18n.__mf("queue.currentPage")} ${currentPage + 1}/${embeds.length}**`,
-      embeds[currentPage]
-    );
+    const queueEmbed = await message.channel.send({content:`**${i18n.__mf("queue.currentPage")} ${currentPage + 1}/${embeds.length}**`,embeds: [embeds[currentPage]]});
 
     try {
       await queueEmbed.react("⬅️");
@@ -38,7 +35,7 @@ module.exports = {
     }
 
     const filter = (reaction, user) =>
-      ["⬅️", "⏹", "➡️"].includes(reaction.emoji.name) && message.author.id === user.id;
+      ["⬅️", "⏹", "➡️"].includes(reaction.emoji.name) && message.member.id === user.id;
     const collector = queueEmbed.createReactionCollector(filter, { time: 60000 });
 
     collector.on("collect", async (reaction, user) => {
@@ -46,24 +43,18 @@ module.exports = {
         if (reaction.emoji.name === "➡️") {
           if (currentPage < embeds.length - 1) {
             currentPage++;
-            queueEmbed.edit(
-              i18n.__mf("queue.currentPage", { page: currentPage + 1, length: embeds.length }),
-              embeds[currentPage]
-            );
+            queueEmbed.edit({content:i18n.__mf("queue.currentPage", { page: currentPage + 1, length: embeds.length }), embeds: [embeds[currentPage]]});
           }
         } else if (reaction.emoji.name === "⬅️") {
           if (currentPage !== 0) {
             --currentPage;
-            queueEmbed.edit(
-              i18n.__mf("queue.currentPage", { page: currentPage + 1, length: embeds.length }),
-              embeds[currentPage]
-            );
+            queueEmbed.edit({content: i18n.__mf("queue.currentPage", { page: currentPage + 1, length: embeds.length }), embeds: [embeds[currentPage]]});
           }
         } else {
           collector.stop();
           reaction.message.reactions.removeAll();
         }
-        await reaction.users.remove(message.author.id);
+        await reaction.users.remove(message.member.id);
       } catch (error) {
         console.error(error);
         return message.channel.send(error.message).catch(console.error);

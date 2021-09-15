@@ -25,7 +25,7 @@ module.exports = {
   async execute(message, choice) {
     const { channel } = message.member.voice;
 
-    const args = choice.length ? choice : [message.getString('song')];
+    const args = choice.length ? choice : [message.options.getString('song')];
 
     const serverQueue = message.client.queue.get(message.guildId);
 

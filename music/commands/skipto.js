@@ -17,7 +17,7 @@ module.exports = {
   description: i18n.__("skipto.description"),
   execute(message) {
 
-    const args = [message.getInteger('queue-id')];
+    const args = [message.options.getInteger('queue-id')];
 
     if (!args.length || isNaN(args[0]))
       return message

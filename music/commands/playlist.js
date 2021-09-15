@@ -26,7 +26,7 @@ module.exports = {
     const { channel } = message.member.voice;
     const serverQueue = message.client.queue.get(message.guildId);
 
-    const args = [message.getString('playlist')];
+    const args = [message.options.getString('playlist')];
 
     if (!args.length)
       return message

@@ -18,7 +18,7 @@ module.exports = {
   data: data,
   description: i18n.__("search.description"),
   async execute(message) {
-    const args = [message.getString('search-query')];
+    const args = [message.options.getString('search-query')];
     if (!args.length)
       return message
         .reply({content: i18n.__mf("search.usageReply", { prefix: message.client.prefix, name: module.exports.name }), ephemeral: true})

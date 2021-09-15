@@ -19,7 +19,7 @@ module.exports = {
   description: i18n.__("remove.description"),
   execute(message) {
     const queue = message.client.queue.get(message.guildId);
-    const args = [message.getInteger('queue-id')];
+    const args = [message.options.getInteger('queue-id')];
     if (!queue) return message.channel.send(i18n.__("remove.errorNotQueue")).catch(console.error);
     if (!canModifyQueue(message.member)) return i18n.__("common.errorNotChannel");
     if (!args.length) return message.reply(i18n.__mf("remove.usageReply", { prefix: message.client.prefix }));

@@ -17,7 +17,7 @@ module.exports = {
   description: i18n.__("volume.description"),
   execute(message) {
     const queue = message.client.queue.get(message.guildId);
-    const args = [message.getInteger('volume')];
+    const args = [message.options.getInteger('volume')];
 
     if (!queue) return message.reply(i18n.__("volume.errorNotQueue")).catch(console.error);
     if (!canModifyQueue(message.member))

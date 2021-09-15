@@ -21,9 +21,9 @@ module.exports = {
   data: data,
   description: i18n.__("move.description"),
   execute(message) {
-    const args = [message.getInteger('queue-id-1')];
+    const args = [message.options.getInteger('queue-id-1')];
     if (message.getInteger('queue-id-2')) {
-      args.push(message.getInteger('queue-id-2'));
+      args.push(message.options.getInteger('queue-id-2'));
     }
     const queue = message.client.queue.get(message.guildId);
     if (!queue) return message.channel.send(i18n.__("move.errorNotQueue")).catch(console.error);

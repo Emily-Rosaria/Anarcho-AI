@@ -11,6 +11,14 @@
     "mod": "775508205220397076",
     "user": "775630435514449960"
   },
+  "music": {
+    "STAY_TIME": 30,
+    "MAX_PLAYLIST_SIZE": 10,
+    "PRUNING": false,
+    "STAY_TIME": 30,
+    "DEFAULT_VOLUME": 70,
+    "LOCALE": "en"
+  },
   "special": ["247344219809775617","453965784000102432","303320488657027074","269908878001438721","401171193480216586","335262757941280778","440250714095222784"],
   "dbName":"anarcho",
   "default_words":["titter","based","epic","pog","poggers","gamer","gaming","israel","praxis","palestine","cringe","bread","debat","sus","amogus","mashallah"],

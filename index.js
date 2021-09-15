@@ -69,6 +69,8 @@ for (const file of buttonFiles) {
 client.on('ready', async function() {
     client.user.setPresence({ status: 'online' }); // activity: { type: 'PLAYING', name: 'with anti-fash' }
     console.log(`${client.user.username} is up and running! Launched at: ${(new Date()).toUTCString()}.`);
+    const startMusic = require("./music/setup.js");
+    startMusic(client);
 });
 
 client.on('messageCreate', async message => {
@@ -112,8 +114,6 @@ client.on('messageReactionRemoveAll', async (message) => {
 client.on('clickButton', async (button) => {
     client.events.get("onButton").event(button);
 });
-
-
 
 connectDB("mongodb://localhost:27017/"+database);
 client.login(process.env.TOKEN); // Log the bot in using the token provided in the .env file

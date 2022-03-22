@@ -60,7 +60,7 @@ module.exports = {
       .setTimestamp();
 
       if (message.attachments) {
-        let image = message.attachments.find(att => att && att.url && att.url.match(/\.(png|webm|gif|jpg|jpeg)$/i));
+        let image = message.attachments.find(att => att.url && att.url.match(/\.(png|webm|gif|jpg|jpeg)$/i));
         if (image && image.url) {image = image.url}
         if (!image & message.embeds) {
           let image = message.embeds.find(emb => emb.image && emb.image.url).image.url;

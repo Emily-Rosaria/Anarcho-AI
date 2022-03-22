@@ -55,20 +55,37 @@ module.exports = {
       const embed = new Discord.MessageEmbed()
       .setColor(randomColor)
       .setAuthor(randomName,encodeURI(randomIcon))
-      .setDescription(anonText)
       .setFooter("An anonymous user submitted this message via the \"confess\" command")
       .setTimestamp();
+
+      async function checkImage(url){
+         const res = await fetch(url);
+         const buff = await res.blob();
+         return buff.type.startsWith('image/')
+      }
+
+      var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
 
       if (message.attachments) {
         let image = message.attachments.find(att => att.url && att.url.match(/\.(png|webm|gif|jpg|jpeg)$/i));
         if (image && image.url) {image = image.url}
-        if (!image & message.embeds) {
-          let image = message.embeds.find(emb => emb.image && emb.image.url);
-          if (image && image.image && image.image.url) {image = image.image.url}
+        if (!image) {
+          const links = message.content.match(urlRegex);
+          if (links) {
+            if (checkImage(links[0])) {
+              image = links[0]
+            } else if (links.length > 1 && checkImage(links[links.length - 1])) {
+              image = links[1]
+            }
+          }
         }
         if (image) {
           embed.setImage(image);
         }
+      }
+
+      if (anonText.trim() != image) {
+        embed.setDescription(anonText);
       }
 
       const confess_msg = await channel.send({embeds: [embed]});

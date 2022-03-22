@@ -4,6 +4,7 @@ const adjectives = require('./../../assets/adjectives.json');
 const nouns = require('./../../assets/nouns.json');
 const Discord = require('discord.js'); // Embed stuff
 const Confess = require("./../../database/models/confess.js"); // users model
+const fetch = require("node-fetch");
 
 module.exports = {
     name: 'confess', // The name of the command

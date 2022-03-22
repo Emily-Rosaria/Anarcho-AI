@@ -27,7 +27,7 @@ module.exports = {
       //get query field
       query["wordcounts."+word] = {"$gte":1};
       query.bot = {"$ne":true}; // hide bots by default
-      const data = await Users.find(query).exec();
+      const data = await Users.find(query).select("wordcounts."+word).exec();
 
       if (!data || data.length == 0) {
         return message.reply(`No users have been recorded to have said ${word}. Note that words shorter than 3 letters aren't logged, and most symbols and capitalisation is removed.`);

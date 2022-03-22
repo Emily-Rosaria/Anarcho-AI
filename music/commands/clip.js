@@ -1,5 +1,6 @@
 const i18n = require("../util/i18n");
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { joinVoiceChannel, getVoiceConnection } = require ('@discordjs/voice');
 
 const data = new SlashCommandBuilder()
 	.setName("clip")
@@ -37,16 +38,20 @@ module.exports = {
     message.client.queue.set(message.guildId, queueConstruct);
 
     try {
-      queueConstruct.connection = await channel.join();
+      queueConstruct.connection = await joinVoiceChannel({
+      	channelId: channel.id,
+      	guildId: channel.guild.id,
+      	adapterCreator: channel.guild.voiceAdapterCreator,
+      });
       const dispatcher = queueConstruct.connection
         .play(`./sounds/${args[0]}.mp3`)
         .on("finish", () => {
           message.client.queue.delete(message.guildId);
-          channel.leave();
+          queueConstruct.connection.destroy();
         })
         .on("error", (err) => {
           message.client.queue.delete(message.guildId);
-          channel.leave();
+          queueConstruct.connection.destroy();
           console.error(err);
         });
     } catch (error) {

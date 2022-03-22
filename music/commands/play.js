@@ -7,6 +7,7 @@ const https = require("https");
 const { YOUTUBE_API_KEY, SOUNDCLOUD_CLIENT_ID, DEFAULT_VOLUME } = require("../util/Util");
 const youtube = new YouTubeAPI(YOUTUBE_API_KEY);
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { joinVoiceChannel, getVoiceConnection } = require ('@discordjs/voice');
 
 const data = new SlashCommandBuilder()
 	.setName('play')
@@ -55,16 +56,16 @@ module.exports = {
 
     // Start the playlist if playlist url was provided
     if (!videoPattern.test(args[0]) && playlistPattern.test(args[0])) {
-      return message.client.commands.get("playlist").execute(message, args);
+      return message.client.musicCommands.get("playlist").execute(message);
     } else if (scdl.isValidUrl(url) && url.includes("/sets/")) {
-      return message.client.commands.get("playlist").execute(message, args);
+      return message.client.musicCommands.get("playlist").execute(message);
     }
 
     if (mobileScRegex.test(url)) {
       try {
         https.get(url, function (res) {
           if (res.statusCode == "302") {
-            return message.client.commands.get("play").execute(message, [res.headers.location]);
+            return message.client.musicCommands.get("play").execute(message, [res.headers.location]);
           } else {
             return message.reply(i18n.__("play.songNotFound")).catch(console.error);
           }
@@ -79,7 +80,6 @@ module.exports = {
     const queueConstruct = {
       textChannel: message.channel,
       channel,
-      connection: null,
       songs: [],
       loop: false,
       volume: DEFAULT_VOLUME,
@@ -143,16 +143,20 @@ module.exports = {
     }
 
     queueConstruct.songs.push(song);
-    message.client.queue.set(message.guildId, queueConstruct);
 
     try {
-      queueConstruct.connection = await channel.join();
-      await queueConstruct.connection.voice.setSelfDeaf(true);
+			const connection = await joinVoiceChannel({
+      	channelId: channel.id,
+      	guildId: channel.guild.id,
+      	adapterCreator: channel.guild.voiceAdapterCreator,
+      });
+      message.client.queue.set(message.guildId, queueConstruct);
+      //await queueConstruct.connection.voice.setSelfDeaf(true);
       play(queueConstruct.songs[0], message);
     } catch (error) {
       console.error(error);
       message.client.queue.delete(message.guildId);
-      await channel.leave();
+      getVoiceConnection(message.guildId).destroy();
       return message.channel.send(i18n.__mf("play.cantJoinChannel", { error: error })).catch(console.error);
     }
   }

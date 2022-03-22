@@ -5,7 +5,7 @@ const YouTubeAPI = require("simple-youtube-api");
 const scdl = require("soundcloud-downloader").default;
 const { YOUTUBE_API_KEY, SOUNDCLOUD_CLIENT_ID, MAX_PLAYLIST_SIZE, DEFAULT_VOLUME } = require("../util/Util");
 const youtube = new YouTubeAPI(YOUTUBE_API_KEY);
-
+const { joinVoiceChannel, getVoiceConnection } = require ('@discordjs/voice');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 const data = new SlashCommandBuilder()
@@ -120,13 +120,17 @@ module.exports = {
       message.client.queue.set(message.guildId, queueConstruct);
 
       try {
-        queueConstruct.connection = await channel.join();
-        await queueConstruct.connection.voice.setSelfDeaf(true);
+        queueConstruct.connection = await joinVoiceChannel({
+        	channelId: channel.id,
+        	guildId: channel.guild.id,
+        	adapterCreator: channel.guild.voiceAdapterCreator,
+        });
+        //await queueConstruct.connection.voice.setSelfDeaf(true);
         play(queueConstruct.songs[0], message);
       } catch (error) {
         console.error(error);
         message.client.queue.delete(message.guildId);
-        await channel.leave();
+        getVoiceConnection(message.guildId).destroy();
         return message.channel.send({content: i18n.__mf("play.cantJoinChannel", { error: error }), ephemeral: true}).catch(console.error);
       }
     }

@@ -58,6 +58,17 @@ module.exports = {
       .setDescription(anonText)
       .setFooter("An anonymous user submitted this message via the \"confess\" command")
       .setTimestamp();
+
+      if (message.attachments) {
+        let image = message.attachments.find(att => att.url.match(/\.(png|webm|gif|jpg|jpeg)$/i)).url;
+        if (!image & message.embeds) {
+          let image = message.embeds.find(emb => emb.image && emb.image.url).image.url;
+        }
+        if (image) {
+          embed.setImage(image);
+        }
+      }
+
       const confess_msg = await channel.send({embeds: [embed]});
       await Confess.create({
         _id: confess_msg.id,

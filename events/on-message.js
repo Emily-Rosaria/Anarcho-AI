@@ -1,4 +1,4 @@
-const config = require('./../config.json'); // load bot config
+const config = require('./../../config.json'); // load bot config
 const Discord = require('discord.js'); // Loads the discord API library
 
 module.exports = {
@@ -30,7 +30,7 @@ module.exports = {
 
     const botPing = ["<@" + client.user.id + ">","<@!" + client.user.id + ">"];
 
-    const dmExtraPrefix = (message.channel.type == "DM") ? ["!","?","$","-"] : ["XXX"];
+    const dmExtraPrefix = (message.channel.type == "DM") ? ["!","?","$","-"] : ["+"];
     // Find if message begins with a valid command prefix
     const prefix = config.prefix.concat(botPing).concat(dmExtraPrefix).filter(p => message.content.toLowerCase().startsWith(p));
 
@@ -107,7 +107,7 @@ module.exports = {
         // check perms for admin/mod commands where user isn't a dev
         if (message.author.id != config.perms.dev) {
           // only check further if user isn't an admin
-          if (!roleCache.includes(config.perms.admin) || !message.member.hasPermission("ADMINISTRATOR")) {
+          if (!roleCache.includes(config.perms.admin)) {
             if (command.perms == "admin") {
               return message.reply("You do not have the required permissions to use this command; this command is only for server admins.");
               // only check further for non-mods (as mod is one down from admin)

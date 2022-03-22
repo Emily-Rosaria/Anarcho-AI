@@ -2,31 +2,35 @@ const ytdl = require("ytdl-core-discord");
 const scdl = require("soundcloud-downloader").default;
 const { canModifyQueue, STAY_TIME } = require("../util/Util");
 const i18n = require("../util/i18n");
+const {
+	AudioPlayerStatus,
+  VoiceConnectionStatus,
+	StreamType,
+	createAudioPlayer,
+	createAudioResource,
+	joinVoiceChannel
+} = require('@discordjs/voice');
+
 
 module.exports = {
-  async play(song, message) {
+  async play(song, interaction) {
     const { SOUNDCLOUD_CLIENT_ID } = require("../util/Util");
 
-    let config;
+    let config = require("./../../config.json");
 
-    try {
-      config = require("../config.json");
-    } catch (error) {
-      config = null;
-    }
+    const PRUNING = config.music.PRUNING || false;
 
-    const PRUNING = config ? config.PRUNING : process.env.PRUNING;
-
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = interaction.client.queue.get(interaction.guildId);
+    const connection = getVoiceConnection(interaction.guildId);
 
     if (!song) {
       setTimeout(function () {
-        if (queue.connection.dispatcher && message.guild.me.voice.channel) return;
-        queue.channel.leave();
-        !PRUNING && queue.textChannel.send(i18n.__("play.leaveChannel"));
+        if (AudioPlayerStatus.Idle && interaction.guild.me.voice.channel) {
+          getVoiceConnection(interaction.guildId).destroy();
+        }
       }, STAY_TIME * 1000);
       !PRUNING && queue.textChannel.send(i18n.__("play.queueEnded")).catch(console.error);
-      return message.client.queue.delete(message.guild.id);
+      return interaction.client.queue.delete(interaction.guild.id);
     }
 
     let stream = null;
@@ -34,7 +38,7 @@ module.exports = {
 
     try {
       if (song.url.includes("youtube.com")) {
-        stream = await ytdl(song.url, { highWaterMark: 1 << 25 });
+        stream = await ytdl(song.url, { filter: 'audioonly' });
       } else if (song.url.includes("soundcloud.com")) {
         try {
           stream = await scdl.downloadFormat(song.url, scdl.FORMATS.OPUS, SOUNDCLOUD_CLIENT_ID);
@@ -46,16 +50,34 @@ module.exports = {
     } catch (error) {
       if (queue) {
         queue.songs.shift();
-        module.exports.play(queue.songs[0], message);
+        module.exports.play(queue.songs[0], interaction);
       }
 
       console.error(error);
-      return message.channel.send(
+      return interaction.channel.send(
         i18n.__mf("play.queueError", { error: error.message ? error.message : error })
       );
     }
 
-    queue.connection.on("disconnect", () => message.client.queue.delete(message.guild.id));
+    connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+    	try {
+    		await Promise.race([
+    			entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+    			entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+    		]);
+    		// Seems to be reconnecting to a new channel - ignore disconnect
+    	} catch (error) {
+    		interaction.client.queue.delete(interaction.guild.id);
+    		connection.destroy();
+    	}
+    });
+
+    const resource = createAudioResource(stream, { inputType: StreamType.Arbitrary });
+    const player = createAudioPlayer();
+
+    player.play(resource);
+    connection.subscribe(player);
+
 
     const dispatcher = queue.connection
       .play(stream, { type: streamType })
@@ -69,17 +91,17 @@ module.exports = {
           // so it can repeat endlessly
           let lastSong = queue.songs.shift();
           queue.songs.push(lastSong);
-          module.exports.play(queue.songs[0], message);
+          module.exports.play(queue.songs[0], interaction);
         } else {
           // Recursively play the next song
           queue.songs.shift();
-          module.exports.play(queue.songs[0], message);
+          module.exports.play(queue.songs[0], interaction);
         }
       })
       .on("error", (err) => {
         console.error(err);
         queue.songs.shift();
-        module.exports.play(queue.songs[0], message);
+        module.exports.play(queue.songs[0], interaction);
       });
     dispatcher.setVolumeLogarithmic(queue.volume / 100);
 
@@ -98,14 +120,14 @@ module.exports = {
       console.error(error);
     }
 
-    const filter = (reaction, user) => user.id !== message.client.user.id;
+    const filter = (reaction, user) => user.id !== interaction.client.user.id;
     var collector = playingMessage.createReactionCollector(filter, {
       time: song.duration > 0 ? song.duration * 1000 : 600000
     });
 
     collector.on("collect", (reaction, user) => {
       if (!queue) return;
-      const member = message.guild.member(user);
+      const member = interaction.guild.member(user);
 
       switch (reaction.emoji.name) {
         case "⏭":

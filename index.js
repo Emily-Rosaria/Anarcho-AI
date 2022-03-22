@@ -111,8 +111,10 @@ client.on('messageReactionRemoveAll', async (message) => {
     client.events.get("onReactionClear").event(message);
 });
 
-client.on('clickButton', async (button) => {
-    client.events.get("onButton").event(button);
+client.on('interactionCreate', async (button) => {
+    if (button.isButton) {
+      client.events.get("onButton").event(button);
+    }
 });
 
 connectDB("mongodb://localhost:27017/"+database);

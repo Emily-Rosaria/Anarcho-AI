@@ -10,7 +10,7 @@ module.exports = {
     perms: 'user',
     allowDM: true,
     group: 'fun',
-    args: 2,
+    args: 1,
     usage: '<name> <content>', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {
       var userID = message.author.id;

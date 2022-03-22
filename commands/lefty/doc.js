@@ -2,6 +2,7 @@ const mongoose = require("mongoose"); //database library
 const config = require('./../../config.json'); // load bot config
 const Users = require("./../../database/models/users.js"); // users model
 const Docs = require("./../../database/models/documents.js"); // users model
+const Discord = require('discord.js'); // Embed stuff
 
 module.exports = {
     name: 'doc', // The name of the command
@@ -19,6 +20,21 @@ module.exports = {
 
       const data = await Users.findById({_id: message.author.id}).exec();
 
+      function sendDoc(doc) {
+        const embed = new Discord.MessageEmbed()
+        if (doc.image && (doc.content == doc.image || !doc.content)) {
+          embed.setImage(doc.image);
+          return message.channel.send({embeds: [embed]});
+        } else if (!doc.image && doc.content) {
+          return message.channel.send({content: doc.content,allowedMentions: { repliedUser: false }});
+        } else if (doc.image && doc.content) {
+          embed.setImage(doc.image);
+          return message.channel.send({content: doc.content,embeds: [embed], allowedMentions: { repliedUser: false }});
+        }
+
+        return message.reply("Error with the database. Document format was invalid.");
+      }
+
       // search database for docs from other users
       if (!data || !data.documents || !data.documents.has(title)) {
         Docs.find({name: title}, (err,docs)=>{
@@ -27,8 +43,8 @@ module.exports = {
           }
           let index = Math.floor(docs.length * Math.random());
           const doc = docs[index];
-          if (doc.content) {
-            return message.channel.send(doc.content,{allowedMentions: { repliedUser: false }});
+          if (doc.content || doc.image) {
+            return sendDoc (doc);
           } else {
             return message.reply("Error with the database. No document content.");
           }
@@ -41,8 +57,8 @@ module.exports = {
           return message.reply("Error with the database. Document could not be found.");
           if (err) {console.error(err);}
         }
-        if (doc.content) {
-          return message.channel.send(doc.content,{allowedMentions: { repliedUser: false }});
+        if (doc.content || doc.image) {
+          return sendDoc (doc);
         } else {
           return message.reply("Error with the database. No document content.");
         }

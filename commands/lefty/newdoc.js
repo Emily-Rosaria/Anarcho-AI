@@ -29,7 +29,32 @@ module.exports = {
       var content = message.content.trim().replace(regex1,"").replace(regex2,"");
       title = title.replace(/ {2,}/," ").toLowerCase().trim().replace(/"/g,"");
 
-      if (!content || content == "") {
+      async function checkImage(url){
+         const res = await fetch(url);
+         const buff = await res.blob();
+         return buff.type.startsWith('image/')
+      }
+
+      var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
+
+      let image = "";
+
+      if (message.attachments) {
+        image = message.attachments.find(att => att.url && att.url.match(/\.(png|webm|gif|jpg|jpeg)$/i));
+        if (image && image.url) {image = image.url}
+        if (!image) {
+          const links = content.match(urlRegex);
+          if (links) {
+            if (checkImage(links[0])) {
+              image = links[0]
+            } else if (links.length > 1 && checkImage(links[links.length - 1])) {
+              image = links[1]
+            }
+          }
+        }
+      }
+
+      if ((!content || content == "") && !image) {
         return message.reply(`Invalid content for your ${title} document. Make sure to write at least two arguments for the command. If the name value is multiple words, write it within "quotation marks". Don't write the content within these symbols.`);
       }
 
@@ -44,6 +69,7 @@ module.exports = {
         _id: message.id,
         name: title,
         content: content,
+        image: image,
         user: userID,
         type: "text"
       });

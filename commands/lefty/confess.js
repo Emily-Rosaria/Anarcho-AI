@@ -67,8 +67,10 @@ module.exports = {
 
       var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
 
+      let image = "";
+
       if (message.attachments) {
-        let image = message.attachments.find(att => att.url && att.url.match(/\.(png|webm|gif|jpg|jpeg)$/i));
+        image = message.attachments.find(att => att.url && att.url.match(/\.(png|webm|gif|jpg|jpeg)$/i));
         if (image && image.url) {image = image.url}
         if (!image) {
           const links = message.content.match(urlRegex);

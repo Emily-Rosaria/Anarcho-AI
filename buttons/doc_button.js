@@ -14,6 +14,21 @@ module.exports = {
 
     const data = await Users.findById({_id: uID}).exec();
 
+    function sendDoc(doc) {
+      const embed = new Discord.MessageEmbed()
+      if (doc.image && (doc.content == doc.image || !doc.content)) {
+        embed.setImage(doc.image);
+        return button.reply.send({embeds: [embed]},true);
+      } else if (!doc.image && doc.content) {
+        return button.reply.send({content: doc.content,allowedMentions: { repliedUser: false }},true);
+      } else if (doc.image && doc.content) {
+        embed.setImage(doc.image);
+        return button.reply.send({content: doc.content,embeds: [embed], allowedMentions: { repliedUser: false }},true);
+      }
+
+      return button.reply.send("Error with the database. Document format was invalid.",true);
+    }
+
     // search database for docs from other users
     if (!data || !data.documents || !data.documents.has(title)) {
       Docs.find({name: title}, (err,docs)=>{
@@ -22,11 +37,10 @@ module.exports = {
         }
         let index = Math.floor(docs.length * Math.random());
         const doc = docs[index];
-        if (doc.content) {
+        if (doc.content || doc.image) {
           return button.reply.send(doc.content,true);
         }
       });
-      return;
     }
 
     Docs.findById({_id: data.documents.get(title)}, (err,doc)=>{
@@ -34,7 +48,7 @@ module.exports = {
         return button.reply.send("Error with the database. Document could not be found.",true);
         if (err) {console.error(err);}
       }
-      if (doc.content) {
+      if (doc.content || doc.image) {
         return button.reply.send(doc.content,true);
       } else {
         return button.reply.send("Error with the database. No document content.",true);

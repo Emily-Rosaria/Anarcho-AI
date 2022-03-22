@@ -56,8 +56,6 @@ module.exports = {
 
       if ((!content || content == "") && !image) {
         return message.reply(`Invalid content for your ${title} document. Make sure to write at least two arguments for the command. If the name value is multiple words, write it within "quotation marks". Don't write the content within these symbols.`);
-      } else if (!content & image) {
-        content = image;
       }
 
       var options = { upsert: true, setDefaultsOnInsert: true };
@@ -70,7 +68,7 @@ module.exports = {
       await Docs.create({
         _id: message.id,
         name: title,
-        content: content,
+        content: content || image,
         image: image,
         user: userID,
         type: "text"

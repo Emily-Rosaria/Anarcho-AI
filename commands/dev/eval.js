@@ -1,5 +1,6 @@
 const config = require('./../../config.json'); // load bot config
 const Discord = require('discord.js'); // Image embed
+const fetch = require("node-fetch");
 
 module.exports = {
     name: 'eval', // The name of the command

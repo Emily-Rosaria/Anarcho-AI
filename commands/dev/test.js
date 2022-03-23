@@ -1,6 +1,8 @@
 const mongoose = require("mongoose"); //database library
 const Users = require("./../../database/models/users.js"); // users model
+const Discord = require('discord.js'); // Image embed
 const config = require('./../../config.json'); // load bot config
+const fetch = require("node-fetch");
 
 module.exports = {
     name: 'test', // The name of the command
@@ -9,9 +11,8 @@ module.exports = {
     perms: 'dev',
     allowDM: true,
     async execute(message, args) {
-      const query = {"$and":[{bot:{"$ne":true}}, {"$or":[{"wordcounts.based":{"$gte":1}},{"wordcounts.cringe":{"$gte":1}}]}]};
-      const data = await Users.find(query).select("wordcounts.based wordcounts.cringe").exec();
-      const csv = data.map(d=>`${(d.wordcounts.get("based") || 0)},${(d.wordcounts.get("cringe") || 0)}`);
-      message.reply(csv.join('\n'));
+      const res = await fetch(args[0]);
+      const buff = await res.blob();
+      console.log(buff.type);
     },
 };

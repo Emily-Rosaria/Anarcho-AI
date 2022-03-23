@@ -2,6 +2,7 @@ const mongoose = require("mongoose"); //database library
 const config = require('./../../config.json'); // load bot config
 const Users = require("./../../database/models/users.js"); // users model
 const Docs = require("./../../database/models/documents.js"); // users model
+const fetch = require("node-fetch");
 
 module.exports = {
     name: 'newdoc', // The name of the command
@@ -30,9 +31,12 @@ module.exports = {
       title = title.replace(/ {2,}/," ").toLowerCase().trim().replace(/"/g,"");
 
       async function checkImage(url){
+        return url.match(/\.(png|webm|gif|jpg|jpeg)$/i);
+        /*
          const res = await fetch(url);
          const buff = await res.blob();
-         return buff.type.startsWith('image/')
+         return buff.type.startsWith('image/');
+        */
       }
 
       var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
@@ -40,8 +44,12 @@ module.exports = {
       let image = "";
 
       if (message.attachments) {
-        image = message.attachments.find(att => att.url && att.url.match(/\.(png|webm|gif|jpg|jpeg)$/i));
+        image = message.attachments.find(att => att.url && att.contentType == "image/");
+        if (!image && message.embeds) {
+          image = message.embeds.find(emb => emb.url && emb.type == "image");
+        }
         if (image && image.url) {image = image.url}
+        /*
         if (!image) {
           const links = content.match(urlRegex);
           if (links) {
@@ -52,6 +60,7 @@ module.exports = {
             }
           }
         }
+        */
       }
 
       if ((!content || content == "") && !image) {

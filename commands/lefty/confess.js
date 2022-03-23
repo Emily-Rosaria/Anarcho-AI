@@ -74,10 +74,11 @@ module.exports = {
 
       if (message.attachments) {
         image = message.attachments.find(att => att.url && att.contentType.startsWith("image/"));
-        if (!image && message.embeds) {
-          image = message.embeds.find(emb => emb.url && ["image","gifv"].includes(emb.type));
-        }
-        if (image && image.url) {image = image.url}
+      }
+      if (!image && message.embeds) {
+        image = message.embeds.find(emb => emb.url && ["image","gifv"].includes(emb.type));
+      }
+      if (image && image.url) {image = image.url}
         /*
         if (!image) {
 
@@ -92,9 +93,8 @@ module.exports = {
 
         }
         */
-        if (image) {
-          embed.setImage(image);
-        }
+      if (image) {
+        embed.setImage(image);
       }
 
       if (anonText.trim() != image) {

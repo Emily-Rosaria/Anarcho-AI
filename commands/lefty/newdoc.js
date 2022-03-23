@@ -30,25 +30,28 @@ module.exports = {
       var content = message.content.trim().replace(regex1,"").replace(regex2,"");
       title = title.replace(/ {2,}/," ").toLowerCase().trim().replace(/"/g,"");
 
+      /*
       async function checkImage(url){
         return url.match(/\.(png|webm|gif|jpg|jpeg)$/i);
-        /*
          const res = await fetch(url);
          const buff = await res.blob();
          return buff.type.startsWith('image/');
-        */
-      }
 
-      var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
+      }
+      */
+
+      // var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
 
       let image = "";
 
       if (message.attachments) {
-        image = message.attachments.find(att => att.url && ["image/"].includes(att.contentType));
-        if (!image && message.embeds) {
-          image = message.embeds.find(emb => emb.url && ["image","gifv"].includes(emb.type));
-        }
-        if (image && image.url) {image = image.url}
+        image = message.attachments.find(att => att.url && att.contentType.startsWith("image/"));
+      }
+      if (!image && message.embeds) {
+        image = message.embeds.find(emb => emb.url && ["image","gifv"].includes(emb.type));
+      }
+      if (image && image.url) {image = image.url}
+
         /*
         if (!image) {
           const links = content.match(urlRegex);
@@ -61,7 +64,6 @@ module.exports = {
           }
         }
         */
-      }
 
       if ((!content || content == "") && !image) {
         return message.reply(`Invalid content for your ${title} document. Make sure to write at least two arguments for the command. If the name value is multiple words, write it within "quotation marks". Don't write the content within these symbols.`);

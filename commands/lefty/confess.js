@@ -59,16 +59,17 @@ module.exports = {
       .setFooter("An anonymous user submitted this message via the \"confess\" command")
       .setTimestamp();
 
+      /*
       async function checkImage(url){
         return url.match(/\.(png|webm|gif|jpg|jpeg)$/i);
-        /*
+
          const res = await fetch(url);
          const buff = await res.blob();
          return buff.type.startsWith('image/');
-         */
+         
       }
-
-      var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
+      */
+      //var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
 
       let image = "";
 

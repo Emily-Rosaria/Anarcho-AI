@@ -44,9 +44,9 @@ module.exports = {
       let image = "";
 
       if (message.attachments) {
-        image = message.attachments.find(att => att.url && att.contentType == "image/");
+        image = message.attachments.find(att => att.url && ["image/"].includes(att.contentType));
         if (!image && message.embeds) {
-          image = message.embeds.find(emb => emb.url && emb.type == "image");
+          image = message.embeds.find(emb => emb.url && ["image","gifv"].includes(emb.type));
         }
         if (image && image.url) {image = image.url}
         /*

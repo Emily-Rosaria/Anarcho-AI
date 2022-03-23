@@ -11,8 +11,12 @@ module.exports = {
     perms: 'dev',
     allowDM: true,
     async execute(message, args) {
-      const res = await fetch(args[0]);
-      const buff = await res.blob();
-      console.log(buff.type);
+      if (args.length > 0) {
+        const res = await fetch(args[0]);
+        const buff = await res.blob();
+        console.log(buff.type);
+      }
+      console.log(message.embeds);
+      console.log(message.attachments);
     },
 };

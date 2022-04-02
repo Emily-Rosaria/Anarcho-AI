@@ -38,6 +38,8 @@ module.exports = async function(client) {
     client.slashCommands.set(command.data.name, command);
   }
 
+  client.voiceTimeouts = new Collection();
+
   const rest = new REST({ version: '9' }).setToken(TOKEN);
 
   (async () => {

@@ -81,7 +81,15 @@ module.exports = {
 
 			var connection = getVoiceConnection(channel.guild.id);
 
-			if (!connection || channel.guild.me.voice.channel.id != channel.id) {
+			if (!connection) {
+				connection = joinVoiceChannel({
+					channelId: channel.id,
+					guildId: channel.guild.id,
+					adapterCreator: channel.guild.voiceAdapterCreator,
+				});
+			}
+			if (connection && channel.guild.me.voice.channel.id != channel.id) {
+				connection.destroy();
 				connection = joinVoiceChannel({
 					channelId: channel.id,
 					guildId: channel.guild.id,
@@ -97,6 +105,27 @@ module.exports = {
 
 			player.play(speech);
 			const subscription = connection.subscribe(player);
+
+			if (message.client.voiceTimeouts.get(channel.guild.id)) {
+				try {
+			    clearTimeout(message.client.voiceTimeouts.get(channel.guild.id));
+			  } catch(e) {
+			    // there's no leaveTimer
+			  }
+			}
+
+			const guildId = channel.guild.id;
+
+			var timeoutFunc = setTimeout(function() {
+				try {
+					getVoiceConnection(guildId).destroy();
+					message.client.voiceTimeouts.delete(channel.guild.id);
+				} catch (e) {
+
+				}
+      }, 20 * 60 * 1000, guildId);
+
+			message.client.voiceTimeouts.set(channel.guild.id,timeoutFunc);
 
 			player.on(AudioPlayerStatus.Idle, () => {
 				player.stop();
@@ -115,6 +144,7 @@ module.exports = {
 			.setTimestamp()
 			return message.reply({embeds: [embed]});
 		} catch (error) {
+			console.error(error);
 			return message.reply("An error occured. This usually happens when a message is too long or has lots of emojis.");
 		}
   }

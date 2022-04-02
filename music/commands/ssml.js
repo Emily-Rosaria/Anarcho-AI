@@ -20,14 +20,14 @@ const data = new SlashCommandBuilder()
 			.setRequired(true))
 	.addStringOption(option =>
 		option.setName('gender')
-			.setDescription('Gender presentation of the voice.')
+			.setDescription('Gender presentation of the default voice.')
 			.setRequired(false)
 			.addChoice('Male', 'MALE')
 			.addChoice('Female', 'FEMALE')
 			.addChoice('Neutral', 'NEUTRAL'))
 	.addStringOption(option =>
 		option.setName('accent')
-			.setDescription('Accent of the voice.')
+			.setDescription('Accent of the default voice.')
 			.setRequired(false)
 			.addChoice('English (Australia)', 'en-AU')
 			.addChoice('English (UK)', 'en-GB')
@@ -46,6 +46,7 @@ module.exports = {
 		if (!text.startsWith("<")) {
 			text = "<speak>"+text+"</speak>";
 		}
+		//text = text.replace('"',"&quot;").replace('&',"&amp;").replace("'","&apos;").replace('<',"&lt;").replace('>',"&gt;");
 		const gender = message.options.getString('gender') || "NEUTRAL";
 		const accent = message.options.getString('accent') || "en-US";
 
@@ -61,8 +62,6 @@ module.exports = {
     const permissions = channel.permissionsFor(message.client.user);
     if (!permissions.has("CONNECT")) return message.reply({content: i18n.__("play.missingPermissionConnect"),ephemeral: true});
     if (!permissions.has("SPEAK")) return message.reply({content: i18n.__("play.missingPermissionSpeak"),ephemeral: true});
-
-		await message.deferReply();
 
 		try {
 
@@ -86,7 +85,15 @@ module.exports = {
 
 			var connection = getVoiceConnection(channel.guild.id);
 
-			if (!connection || channel.guild.me.voice.channel.id != channel.id) {
+			if (!connection) {
+				connection = joinVoiceChannel({
+					channelId: channel.id,
+					guildId: channel.guild.id,
+					adapterCreator: channel.guild.voiceAdapterCreator,
+				});
+			}
+			if (connection && channel.guild.me.voice.channel.id != channel.id) {
+				connection.destroy();
 				connection = joinVoiceChannel({
 					channelId: channel.id,
 					guildId: channel.guild.id,
@@ -102,6 +109,27 @@ module.exports = {
 
 			player.play(speech);
 			const subscription = connection.subscribe(player);
+
+			if (message.client.voiceTimeouts.get(channel.guild.id)) {
+				try {
+			    clearTimeout(message.client.voiceTimeouts.get(channel.guild.id));
+			  } catch(e) {
+			    // there's no leaveTimer
+			  }
+			}
+
+			const guildId = channel.guild.id;
+
+			var timeoutFunc = setTimeout(function() {
+				try {
+					getVoiceConnection(guildId).destroy();
+					message.client.voiceTimeouts.delete(channel.guild.id);
+				} catch (e) {
+
+				}
+      }, 20 * 60 * 1000, guildId);
+
+			message.client.voiceTimeouts.set(channel.guild.id,timeoutFunc);
 
 			player.on(AudioPlayerStatus.Idle, () => {
 				player.stop();
@@ -120,6 +148,7 @@ module.exports = {
 			.setTimestamp()
 			return message.reply({embeds: [embed]});
 		} catch (error) {
+			console.error(error);
   		return message.reply("An error occured. Make sure to check https://cloud.google.com/text-to-speech/docs/ssml for the correct syntax. I recommend just using the `/say` command instead if you just want to say something simple.");
 		}
 	}

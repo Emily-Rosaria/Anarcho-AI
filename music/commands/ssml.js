@@ -85,15 +85,16 @@ module.exports = {
 
 			var connection = getVoiceConnection(channel.guild.id);
 
-			if (!connection) {
+			if (connection && channel.guild.me.voice.channel.id != channel.id) {
+				connection.destroy();
 				connection = joinVoiceChannel({
 					channelId: channel.id,
 					guildId: channel.guild.id,
 					adapterCreator: channel.guild.voiceAdapterCreator,
 				});
 			}
-			if (connection && channel.guild.me.voice.channel.id != channel.id) {
-				connection.destroy();
+
+			if (!connection) {
 				connection = joinVoiceChannel({
 					channelId: channel.id,
 					guildId: channel.guild.id,

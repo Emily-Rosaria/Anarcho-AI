@@ -1,4 +1,4 @@
-const config = require('./../../config.json'); // load bot config
+const config = require('./../config.json'); // load bot config
 const Discord = require('discord.js'); // Loads the discord API library
 
 module.exports = {

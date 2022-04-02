@@ -26,12 +26,23 @@ module.exports = {
           return fileArray;
       };
       const commandFiles = getAllCommands('./commands');
+
       // Loops over each file in the command folder and sets the commands to respond to their name
       for (const file of commandFiles) {
           delete require.cache[require.resolve(file)];
           if (file.endsWith('.js')) {
             const command = require(file);
             client.commands.set(command.name, command);
+          }
+      }
+
+      const slashFiles = fs.readdirSync('./music/commands',{ withFileTypes: true }).filter((file) => file.name.endsWith(".js")).map(file => './../../music/commands/'+file.name);
+      // Loops over each file in the music commands folder and sets the commands to respond to their name
+      for (const file of slashFiles) {
+          delete require.cache[require.resolve(file)];
+          if (file.endsWith('.js')) {
+            const command = require(file);
+            client.slashCommands.set(command.data.name, command);
           }
       }
 
@@ -44,7 +55,6 @@ module.exports = {
           if (!validCommands.includes(key)) {
             console.log('Removing command '+key+' from cache.');
             delete client.commands.delete(key);
-            client.commands.array();
           }
       }
 

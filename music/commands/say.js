@@ -95,8 +95,7 @@ module.exports = {
 				inputType: StreamType.OggOpus
 			});
 
-			player.play(speech);
-			const subscription = await connection.subscribe(player);
+			const subscription = connection.subscribe(player).then(() => player.play(speech)).catch((e) => console.error(e));
 
 			if (message.client.voiceTimeouts.get(channel.guild.id)) {
 				try {

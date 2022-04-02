@@ -85,17 +85,8 @@ module.exports = {
 
 			var connection = getVoiceConnection(channel.guild.id);
 
-			if (connection && channel.guild.me.voice.channel.id != channel.id) {
-				connection.destroy();
-				connection = joinVoiceChannel({
-					channelId: channel.id,
-					guildId: channel.guild.id,
-					adapterCreator: channel.guild.voiceAdapterCreator,
-				});
-			}
-
-			if (!connection) {
-				connection = joinVoiceChannel({
+			if (!connection || channel.guild.me.voice.channel.id != channel.id) {
+				connection = await joinVoiceChannel({
 					channelId: channel.id,
 					guildId: channel.guild.id,
 					adapterCreator: channel.guild.voiceAdapterCreator,
@@ -109,7 +100,7 @@ module.exports = {
 			});
 
 			player.play(speech);
-			const subscription = connection.subscribe(player);
+			const subscription = await connection.subscribe(player);
 
 			if (message.client.voiceTimeouts.get(channel.guild.id)) {
 				try {

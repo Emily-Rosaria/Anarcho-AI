@@ -114,9 +114,9 @@ module.exports = {
 			});
 
 			const embed = new Discord.MessageEmbed()
-			.setDescription(text)
+			.setDescription("```html\n"+text+"\n```")
 			.setColor(message.member.displayHexColor || "#000000")
-			.setFooter(`Sent by ${message.user.username}, ${gender}, ${accent}`)
+			.setFooter(`Complex ssml message by ${message.user.username}`)
 			.setTimestamp()
 			return message.reply({embeds: [embed]});
 		} catch (error) {

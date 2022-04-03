@@ -140,16 +140,6 @@ module.exports = {
 
 			message.client.voiceTimeouts.set(channel.guild.id,timeoutFunc);
 
-			player.on(AudioPlayerStatus.Idle, () => {
-				player.stop();
-				subscription.unsubscribe();
-			});
-
-			player.on(AudioPlayerStatus.AutoPaused, () => {
-				player.stop();
-				subscription.unsubscribe();
-			});
-
 			const embed = new Discord.MessageEmbed()
 			.setDescription("```html\n"+text+"\n```")
 			.setColor(message.member.displayHexColor || "#000000")

@@ -81,14 +81,6 @@ module.exports = {
 
 			var connection = getVoiceConnection(channel.guild.id);
 
-			if (!connection || channel.guild.me.voice.channel.id != channel.id) {
-				connection = joinVoiceChannel({
-					channelId: channel.id,
-					guildId: channel.guild.id,
-					adapterCreator: channel.guild.voiceAdapterCreator,
-				});
-			}
-
 			const player = createAudioPlayer();
 
 			const speech = createAudioResource(Readable.from(response.audioContent), {
@@ -109,12 +101,18 @@ module.exports = {
 					subscription.unsubscribe();
 				});
 			}
-			if (connection.state == VoiceConnectionStatus.Ready) {
-				playVoice();
-			} else {
+
+			if (!connection || channel.guild.me.voice.channel.id != channel.id) {
+				connection = joinVoiceChannel({
+					channelId: channel.id,
+					guildId: channel.guild.id,
+					adapterCreator: channel.guild.voiceAdapterCreator,
+				});
 				connection.once(VoiceConnectionStatus.Ready, () => {
 					playVoice()
 				});
+			} else {
+				playVoice();
 			}
 
 			if (message.client.voiceTimeouts.get(channel.guild.id)) {

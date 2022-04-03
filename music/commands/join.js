@@ -53,6 +53,6 @@ module.exports = {
 
 			return message.reply("Successfully joined you in the voice channel!");
 		}
-		return message.reply("You're not currently in a voice channel right now.",true);
+		return message.reply({content:"You're not currently in a voice channel right now.",ephemeral: true});
   }
 };

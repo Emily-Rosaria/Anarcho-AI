@@ -19,11 +19,11 @@ module.exports = {
 
 		if (connection) {
 			if ((!message.member || !message.member.voice || !message.member.voice.channel || message.member.voice.channel.id != message.guild.me.voice.channel.id) && message.guild.me.voice.channel.members && message.guild.me.voice.channel.members.size > 1) {
-				return message.reply("Sorry, other members are using the bot in a voice channel right now, so you can't use this command without joining them.",true);
+				return message.reply({content:"Sorry, other members are using the bot in a voice channel right now, so you can't use this command without joining them.",ephemeral: true});
 			}
 			connection.destroy();
 			return message.reply("Successfully left the voice channel!");
 		}
-		return message.reply("The bot is not currently in a voice channel right now.",true);
+		return message.reply({content:"The bot is not currently in a voice channel right now.",ephemeral: true});
   }
 };

@@ -140,7 +140,7 @@ module.exports = {
 			return message.reply({embeds: [embed]});
 		} catch (error) {
 			console.error(error);
-  		return message.reply("An error occured. Make sure to check https://cloud.google.com/text-to-speech/docs/ssml for the correct syntax. I recommend just using the `/say` command instead if you just want to say something simple.",true);
+  		return message.reply({content:"An error occured. Make sure to check https://cloud.google.com/text-to-speech/docs/ssml for the correct syntax. I recommend just using the `/say` command instead if you just want to say something simple.",ephemeral: true});
 		}
 	}
 };

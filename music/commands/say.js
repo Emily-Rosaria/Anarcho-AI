@@ -136,7 +136,7 @@ module.exports = {
 			return message.reply({embeds: [embed]});
 		} catch (error) {
 			console.error(error);
-			return message.reply("An error occured. This usually happens when a message is too long or has lots of emojis.",true);
+			return message.reply({content:"An error occured. This usually happens when a message is too long or has lots of emojis.",ephemeral: true});
 		}
   }
 };

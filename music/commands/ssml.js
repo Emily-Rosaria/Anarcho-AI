@@ -101,9 +101,9 @@ module.exports = {
 
 			const subscription = connection.subscribe(player).then(() => player.play(speech)).catch((e) => console.error(e));
 
-			if (message.client.voiceTimeouts.get(channel.guild.id)) {
+			if (message.client.voiceTimeouts.get(guildId)) {
 				try {
-			    clearTimeout(message.client.voiceTimeouts.get(channel.guild.id));
+			    clearTimeout(message.client.voiceTimeouts.get(guildId));
 			  } catch(e) {
 			    // there's no leaveTimer
 			  }

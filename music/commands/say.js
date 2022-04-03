@@ -110,13 +110,13 @@ module.exports = {
 			var timeoutFunc = setTimeout(function() {
 				try {
 					getVoiceConnection(guildId).destroy();
-					message.client.voiceTimeouts.delete(channel.guild.id);
+					message.client.voiceTimeouts.delete(guildId);
 				} catch (e) {
 
 				}
       }, 20 * 60 * 1000, guildId);
 
-			message.client.voiceTimeouts.set(channel.guild.id,timeoutFunc);
+			message.client.voiceTimeouts.set(guildId,timeoutFunc);
 
 			player.on(AudioPlayerStatus.Idle, () => {
 				player.stop();

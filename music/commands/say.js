@@ -82,7 +82,7 @@ module.exports = {
 			var connection = getVoiceConnection(channel.guild.id);
 
 			if (!connection || channel.guild.me.voice.channel.id != channel.id) {
-				connection = await joinVoiceChannel({
+				connection = joinVoiceChannel({
 					channelId: channel.id,
 					guildId: channel.guild.id,
 					adapterCreator: channel.guild.voiceAdapterCreator,
@@ -95,7 +95,27 @@ module.exports = {
 				inputType: StreamType.OggOpus
 			});
 
-			const subscription = connection.subscribe(player).then(() => player.play(speech)).catch((e) => console.error(e));
+			function playVoice() {
+				const subscription = connection.subscribe(player);
+				player.play(speech);
+
+				player.once(AudioPlayerStatus.Idle, () => {
+					player.stop();
+					subscription.unsubscribe();
+				});
+
+				player.once(AudioPlayerStatus.AutoPaused, () => {
+					player.stop();
+					subscription.unsubscribe();
+				});
+			}
+			if (connection.state == VoiceConnectionStatus.Ready) {
+				playVoice();
+			} else {
+				connection.once(VoiceConnectionStatus.Ready, () => {
+					playVoice()
+				});
+			}
 
 			if (message.client.voiceTimeouts.get(channel.guild.id)) {
 				try {
@@ -117,16 +137,6 @@ module.exports = {
       }, 20 * 60 * 1000, guildId);
 
 			message.client.voiceTimeouts.set(guildId,timeoutFunc);
-
-			player.on(AudioPlayerStatus.Idle, () => {
-				player.stop();
-				subscription.unsubscribe();
-			});
-
-			player.on(AudioPlayerStatus.AutoPaused, () => {
-				player.stop();
-				subscription.unsubscribe();
-			});
 
 			const embed = new Discord.MessageEmbed()
 			.setDescription(text)

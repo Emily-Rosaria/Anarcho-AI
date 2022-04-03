@@ -99,11 +99,31 @@ module.exports = {
 				inputType: StreamType.OggOpus
 			});
 
-			const subscription = connection.subscribe(player).then(() => player.play(speech)).catch((e) => console.error(e));
+			function playVoice() {
+				const subscription = connection.subscribe(player);
+				player.play(speech);
 
-			if (message.client.voiceTimeouts.get(guildId)) {
+				player.once(AudioPlayerStatus.Idle, () => {
+					player.stop();
+					subscription.unsubscribe();
+				});
+
+				player.once(AudioPlayerStatus.AutoPaused, () => {
+					player.stop();
+					subscription.unsubscribe();
+				});
+			}
+			if (connection.state == VoiceConnectionStatus.Ready) {
+				playVoice();
+			} else {
+				connection.once(VoiceConnectionStatus.Ready, () => {
+					playVoice()
+				});
+			}
+
+			if (message.client.voiceTimeouts.get(channel.guild.id)) {
 				try {
-			    clearTimeout(message.client.voiceTimeouts.get(guildId));
+			    clearTimeout(message.client.voiceTimeouts.get(channel.guild.id));
 			  } catch(e) {
 			    // there's no leaveTimer
 			  }
@@ -114,7 +134,7 @@ module.exports = {
 			var timeoutFunc = setTimeout(function() {
 				try {
 					getVoiceConnection(guildId).destroy();
-					message.client.voiceTimeouts.delete(channel.guild.id);
+					message.client.voiceTimeouts.delete(guildId);
 				} catch (e) {
 
 				}

@@ -43,7 +43,7 @@ module.exports = {
     const { channel } = message.member.voice;
 
     let text = message.options.getString('text');
-		if (!text.startsWith("<")) {
+		if (!text.startsWith("<speak>")) {
 			text = "<speak>"+text+"</speak>";
 		}
 		//text = text.replace('"',"&quot;").replace('&',"&amp;").replace("'","&apos;").replace('<',"&lt;").replace('>',"&gt;");

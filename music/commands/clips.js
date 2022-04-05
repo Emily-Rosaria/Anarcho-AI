@@ -12,7 +12,7 @@ module.exports = {
   data: data,
   description: i18n.__("clips.description"),
   execute(message) {
-		const soundsPath = path.resolve(__dirname, './commands');
+		const soundsPath = path.resolve(__dirname, '../sounds');
     fs.readdir(soundsPath, function (err, files) {
       if (err) return console.log("Unable to read directory: " + err);
 

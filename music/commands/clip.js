@@ -18,7 +18,7 @@ module.exports = {
   description: i18n.__("clip.description"),
   async execute(message) {
 
-		const soundsPath = path.resolve(__dirname, './commands');
+		const soundsPath = path.resolve(__dirname, '../sounds');
 
 		async function probeAndCreateResource(readableStream) {
 			const { stream, type } = await demuxProbe(readableStream);

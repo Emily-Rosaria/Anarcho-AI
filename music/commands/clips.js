@@ -11,7 +11,7 @@ module.exports = {
   data: data,
   description: i18n.__("clips.description"),
   execute(message) {
-    fs.readdir("./sounds", function (err, files) {
+    fs.readdir("../sounds", function (err, files) {
       if (err) return console.log("Unable to read directory: " + err);
 
       let clips = [];

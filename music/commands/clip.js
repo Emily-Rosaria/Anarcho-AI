@@ -1,6 +1,7 @@
 const i18n = require("../util/i18n");
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { joinVoiceChannel, getVoiceConnection } = require ('@discordjs/voice');
+const { createAudioPlayer, VoiceConnectionStatus, AudioPlayerStatus, createAudioResource, joinVoiceChannel, getVoiceConnection, StreamType, demuxProbe } = require ('@discordjs/voice');
+const fs = require("fs");
 
 const data = new SlashCommandBuilder()
 	.setName("clip")
@@ -15,46 +16,116 @@ module.exports = {
   data: data,
   description: i18n.__("clip.description"),
   async execute(message) {
+
+		async function probeAndCreateResource(readableStream) {
+			const { stream, type } = await demuxProbe(readableStream);
+			return createAudioResource(stream, { inputType: type });
+		}
+
+		async function createResource(file_path) {
+			// Creates an audio resource with inputType = StreamType.Arbitrary
+			const readStream = await probeAndCreateResource(fs.createReadStream(file_path));
+		}
+
     const { channel } = message.member.voice;
 
     const args = [message.options.getString('clip')];
 
     if (!args.length) return message.reply({content: i18n.__("clip.usagesReply"), ephemeral: true}).catch(console.error);
-    if (queue) return message.reply({content: i18n.__("clip.errorQueue"), ephemeral: true});
-    if (!channel) return message.reply({content: i18n.__("clip.errorNotChannel"), ephemeral: true}).catch(console.error);
 
-    const queueConstruct = {
-      textChannel: message.channel,
-      channel,
-      connection: null,
-      songs: [],
-      loop: false,
-      volume: 100,
-      muted: false,
-      playing: true
-    };
+		const serverQueue = message.client.queue.get(message.guildId);
 
-    message.client.queue.set(message.guildId, queueConstruct);
+		if (!channel) return message.reply({content: i18n.__("play.errorNotChannel"),ephemeral: true}).catch(console.error);
 
-    try {
-      queueConstruct.connection = await joinVoiceChannel({
-      	channelId: channel.id,
-      	guildId: channel.guild.id,
-      	adapterCreator: channel.guild.voiceAdapterCreator,
-      });
-      const dispatcher = queueConstruct.connection
-        .play(`./sounds/${args[0]}.mp3`)
-        .on("finish", () => {
-          message.client.queue.delete(message.guildId);
-          queueConstruct.connection.destroy();
-        })
-        .on("error", (err) => {
-          message.client.queue.delete(message.guildId);
-          queueConstruct.connection.destroy();
-          console.error(err);
-        });
-    } catch (error) {
-      console.error(error);
-    }
+		if (serverQueue && channel !== message.guild.me.voice.channel)
+			return message
+				.reply({content: i18n.__mf("play.errorNotInSameChannel", { user: message.client.user }),ephemeral: true})
+				.catch(console.error);
+
+		const permissions = channel.permissionsFor(message.client.user);
+		if (!permissions.has("CONNECT")) return message.reply({content: i18n.__("play.missingPermissionConnect"),ephemeral: true});
+		if (!permissions.has("SPEAK")) return message.reply({content: i18n.__("play.missingPermissionSpeak"),ephemeral: true});
+
+		let clip = args[0].toLowerCase().trim().replace(/ +/g,"_");
+
+		fs.readdir("../sounds", function (err, files) {
+      if (err) return console.log("Unable to read directory: " + err);
+
+      const clips = files.find(file => file.substring(0, file.length - 4).toLowerCase() == clip);
+			if (clips.length < 1) {
+				return message.reply({content: "Your clip could not be found. The clip library is work in progress. Send `.mp3`, `.ogg`, or other short sound clips to `@Dabony#0001` to have them added to the bot.",ephemeral: true}).catch(console.error);
+			} else if (clips.length > 1) {
+				return message.reply({content: "An error occured. Multiple clips with that name were found, likely due to dupilcates with different file extensions.",ephemeral: true}).catch(console.error);
+			}
+			// found a clip
+			clip = clips[0];
+
+			try {
+				var connection = getVoiceConnection(channel.guild.id);
+
+				const player = createAudioPlayer();
+
+				const sound = createResource(`../sounds/${clip}`);
+
+				function playClip() {
+					const subscription = connection.subscribe(player);
+					player.play(sound);
+
+					player.once(AudioPlayerStatus.Idle, () => {
+						player.stop();
+						subscription.unsubscribe();
+					});
+
+					player.once(AudioPlayerStatus.AutoPaused, () => {
+						player.stop();
+						subscription.unsubscribe();
+					});
+				}
+
+				if (!connection || channel.guild.me.voice.channel.id != channel.id) {
+					connection = joinVoiceChannel({
+						channelId: channel.id,
+						guildId: channel.guild.id,
+						adapterCreator: channel.guild.voiceAdapterCreator,
+					});
+					connection.once(VoiceConnectionStatus.Ready, () => {
+						playClip()
+					});
+				} else {
+					playClip();
+				}
+
+				if (message.client.voiceTimeouts.get(channel.guild.id)) {
+					try {
+						clearTimeout(message.client.voiceTimeouts.get(channel.guild.id));
+					} catch(e) {
+						// there's no leaveTimer
+					}
+				}
+
+				const guildId = channel.guild.id;
+
+				var timeoutFunc = setTimeout(function() {
+					try {
+						getVoiceConnection(guildId).destroy();
+						message.client.voiceTimeouts.delete(guildId);
+					} catch (e) {
+
+					}
+				}, 20 * 60 * 1000, guildId);
+
+				message.client.voiceTimeouts.set(guildId,timeoutFunc);
+
+				const embed = new Discord.MessageEmbed()
+				.setDescription(`Playing Clip: ${clip.substring(0, clip.length - 4)}`)
+				.setColor(message.member.displayHexColor || "#000000")
+				.setFooter(`Requested by ${message.user.username}`)
+				.setTimestamp()
+				return message.reply({embeds: [embed]});
+			} catch (error) {
+				console.error(error);
+				return message.reply({content:"There was an error while executing this command.",ephemeral: true});
+			}
+    });
   }
 };

@@ -21,7 +21,7 @@ module.exports = {
       files.forEach(function (file) {
         clips.push(file.substring(0, file.length - 4));
       });
-			return message.reply({content: "The clip library is work in progress. Send `.mp3`, `.ogg`, or other short sound clips to `@Dabony#0001` to have them added to the bot.\n"+`> ${clips.join(", ")}`,ephemeral: true}).catch(console.error);
+			return message.reply({content: "The clip library is work in progress. Send short sound clips to `@Dabony#0001` to have them added to the bot. The current clip list is as follows:\n"+`> ${clips.join(", ")}`,ephemeral: true}).catch(console.error);
     });
   }
 };

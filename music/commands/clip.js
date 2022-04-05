@@ -3,6 +3,10 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { createAudioPlayer, VoiceConnectionStatus, AudioPlayerStatus, createAudioResource, joinVoiceChannel, getVoiceConnection, StreamType, demuxProbe } = require ('@discordjs/voice');
 const fs = require("fs");
 const path = require('path');
+const Discord = require('discord.js'); // Image embed
+const util = require('util');
+const { Readable } = require('stream');
+
 
 const data = new SlashCommandBuilder()
 	.setName("clip")

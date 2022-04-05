@@ -54,7 +54,7 @@ module.exports = {
 		fs.readdir(soundsPath, function (err, files) {
       if (err) return console.log("Unable to read directory: " + err);
 
-      const clips = files.find(file => file.substring(0, file.length - 4).toLowerCase() == clip);
+      const clips = files.filter(file => file.substring(0, file.length - 4).toLowerCase() == clip);
 			if (clips.length < 1) {
 				return message.reply({content: "Your clip could not be found. The clip library is work in progress. Send `.mp3`, `.ogg`, or other short sound clips to `@Dabony#0001` to have them added to the bot.",ephemeral: true}).catch(console.error);
 			} else if (clips.length > 1) {

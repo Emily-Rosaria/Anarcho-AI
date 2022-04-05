@@ -32,6 +32,7 @@ module.exports = {
 		async function createResource(file_path) {
 			// Creates an audio resource with inputType = StreamType.Arbitrary
 			const readStream = await probeAndCreateResource(fs.createReadStream(file_path));
+			return readStream;
 		}
 
     const { channel } = message.member.voice;

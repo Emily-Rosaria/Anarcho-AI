@@ -70,7 +70,7 @@ module.exports = {
 
 				const sound = createResource(path.join(soundsPath,clip));
 
-				function playClip() {
+				function playClip(connection, player, sound) {
 					const subscription = connection.subscribe(player);
 					player.play(sound);
 
@@ -85,17 +85,29 @@ module.exports = {
 					});
 				}
 
-				if (!connection || channel.guild.me.voice.channel.id != channel.id) {
+				if (!connection || (channel.guild.me.voice && channel.guild.me.voice.channel.id != channel.id)) {
 					connection = joinVoiceChannel({
 						channelId: channel.id,
 						guildId: channel.guild.id,
 						adapterCreator: channel.guild.voiceAdapterCreator,
 					});
 					connection.once(VoiceConnectionStatus.Ready, () => {
-						playClip()
+						playClip(connection, player, sound)
+					});
+					connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+						try {
+							await Promise.race([
+								entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+								entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+							]);
+							// Seems to be reconnecting to a new channel - ignore disconnect
+						} catch (error) {
+							// Seems to be a real disconnect which SHOULDN'T be recovered from
+							connection.destroy();
+						}
 					});
 				} else {
-					playClip();
+					playClip(connection, player, sound);
 				}
 
 				if (message.client.voiceTimeouts.get(channel.guild.id)) {

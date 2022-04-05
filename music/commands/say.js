@@ -102,7 +102,7 @@ module.exports = {
 				});
 			}
 
-			if (!connection || channel.guild.me.voice.channel.id != channel.id) {
+			if (!connection || (channel.guild.me.voice && channel.guild.me.voice.channel.id != channel.id)) {
 				connection = joinVoiceChannel({
 					channelId: channel.id,
 					guildId: channel.guild.id,
@@ -110,6 +110,18 @@ module.exports = {
 				});
 				connection.once(VoiceConnectionStatus.Ready, () => {
 					playVoice()
+				});
+				connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+					try {
+						await Promise.race([
+							entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+							entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+						]);
+						// Seems to be reconnecting to a new channel - ignore disconnect
+					} catch (error) {
+						// Seems to be a real disconnect which SHOULDN'T be recovered from
+						connection.destroy();
+					}
 				});
 			} else {
 				playVoice();

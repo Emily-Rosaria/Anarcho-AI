@@ -11,9 +11,6 @@ module.exports = {
   data: data,
   description: i18n.__("clips.description"),
   execute(message) {
-
-    return message.reply({content: "This command is work in progress. Send `.mp3` clips to @Dabony#0001 to have them added to the bot.",ephemeral: true});
-
     fs.readdir("./sounds", function (err, files) {
       if (err) return console.log("Unable to read directory: " + err);
 
@@ -22,8 +19,7 @@ module.exports = {
       files.forEach(function (file) {
         clips.push(file.substring(0, file.length - 4));
       });
-
-      message.reply(`${clips.join(" ")}`).catch(console.error);
+			return message.reply({content: "The clip library is work in progress. Send `.mp3`, `.ogg`, or other short sound clips to `@Dabony#0001` to have them added to the bot.\n"+`> ${clips.join(", ")}`,ephemeral: true}).catch(console.error);
     });
   }
 };

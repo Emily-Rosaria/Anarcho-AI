@@ -16,7 +16,6 @@ module.exports = {
   description: i18n.__("clip.description"),
   async execute(message) {
     const { channel } = message.member.voice;
-    const queue = message.client.queue.get(message.guildId);
 
     const args = [message.options.getString('clip')];
 

@@ -2,6 +2,7 @@ const i18n = require("../util/i18n");
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { createAudioPlayer, VoiceConnectionStatus, AudioPlayerStatus, createAudioResource, joinVoiceChannel, getVoiceConnection, StreamType, demuxProbe } = require ('@discordjs/voice');
 const fs = require("fs");
+const path = require('path');
 
 const data = new SlashCommandBuilder()
 	.setName("clip")
@@ -16,6 +17,8 @@ module.exports = {
   data: data,
   description: i18n.__("clip.description"),
   async execute(message) {
+
+		const soundsPath = path.resolve(__dirname, './commands');
 
 		async function probeAndCreateResource(readableStream) {
 			const { stream, type } = await demuxProbe(readableStream);
@@ -48,7 +51,7 @@ module.exports = {
 
 		let clip = args[0].toLowerCase().trim().replace(/ +/g,"_");
 
-		fs.readdir("../sounds", function (err, files) {
+		fs.readdir(soundsPath, function (err, files) {
       if (err) return console.log("Unable to read directory: " + err);
 
       const clips = files.find(file => file.substring(0, file.length - 4).toLowerCase() == clip);
@@ -65,7 +68,7 @@ module.exports = {
 
 				const player = createAudioPlayer();
 
-				const sound = createResource(`../sounds/${clip}`);
+				const sound = createResource(path.join(soundsPath,clip));
 
 				function playClip() {
 					const subscription = connection.subscribe(player);

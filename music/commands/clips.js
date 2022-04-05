@@ -1,5 +1,6 @@
 const i18n = require("../util/i18n");
 const fs = require("fs");
+const path = require('path');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 const data = new SlashCommandBuilder()
@@ -11,7 +12,8 @@ module.exports = {
   data: data,
   description: i18n.__("clips.description"),
   execute(message) {
-    fs.readdir("../sounds", function (err, files) {
+		const soundsPath = path.resolve(__dirname, './commands');
+    fs.readdir(soundsPath, function (err, files) {
       if (err) return console.log("Unable to read directory: " + err);
 
       let clips = [];

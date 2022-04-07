@@ -29,12 +29,6 @@ module.exports = {
 			return createAudioResource(stream, { inputType: type });
 		}
 
-		async function createResource(file_path) {
-			// Creates an audio resource with inputType = StreamType.Arbitrary
-			const readStream = await probeAndCreateResource(fs.createReadStream(file_path));
-			return readStream;
-		}
-
     const { channel } = message.member.voice;
 
     const args = [message.options.getString('clip')];
@@ -54,7 +48,7 @@ module.exports = {
 		if (!permissions.has("CONNECT")) return message.reply({content: i18n.__("play.missingPermissionConnect"),ephemeral: true});
 		if (!permissions.has("SPEAK")) return message.reply({content: i18n.__("play.missingPermissionSpeak"),ephemeral: true});
 
-		let clip = args[0].toLowerCase().trim().replace(/ +/g,"_");
+		let clip = args[0].toLowerCase().trim().replace(/[ -]+/g,"_");
 
 		fs.readdir(soundsPath, function (err, files) {
       if (err) return console.log("Unable to read directory: " + err);
@@ -73,9 +67,8 @@ module.exports = {
 
 				const player = createAudioPlayer();
 
-				const sound = createResource(path.join(soundsPath,clip));
-
-				function playClip(connection, player, sound) {
+				async function playClip() {
+					const sound = await probeAndCreateResource(fs.createReadStream(path.join(soundsPath,clip)));
 					const subscription = connection.subscribe(player);
 					player.play(sound);
 
@@ -97,7 +90,7 @@ module.exports = {
 						adapterCreator: channel.guild.voiceAdapterCreator,
 					});
 					connection.once(VoiceConnectionStatus.Ready, () => {
-						playClip(connection, player, sound)
+						playClip()
 					});
 					connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
 						try {
@@ -112,7 +105,7 @@ module.exports = {
 						}
 					});
 				} else {
-					playClip(connection, player, sound);
+					playClip();
 				}
 
 				if (message.client.voiceTimeouts.get(channel.guild.id)) {

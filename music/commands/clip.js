@@ -48,7 +48,7 @@ module.exports = {
 		if (!permissions.has("CONNECT")) return message.reply({content: i18n.__("play.missingPermissionConnect"),ephemeral: true});
 		if (!permissions.has("SPEAK")) return message.reply({content: i18n.__("play.missingPermissionSpeak"),ephemeral: true});
 
-		let clip = args[0].toLowerCase().trim().replace(/[ -]+/g,"_");
+		let clip = args[0].toLowerCase().trim().replace(/[ -]+/g,"_").replace(/["'?!.]/g,"");
 
 		fs.readdir(soundsPath, function (err, files) {
       if (err) return console.log("Unable to read directory: " + err);

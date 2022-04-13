@@ -106,7 +106,7 @@ module.exports = {
 				});
 			}
 
-			if (!connection || (channel.guild.me.voice && channel.guild.me.voice.channel.id != channel.id)) {
+			if (!connection || (channel.guild.me.voice && channel.guild.me.voice.channel && channel.guild.me.voice.channel.id != channel.id)) {
 				connection = joinVoiceChannel({
 					channelId: channel.id,
 					guildId: channel.guild.id,

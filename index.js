@@ -10,6 +10,7 @@ const path = require("path"); // Resolves file paths
 const Discord = require('discord.js'); // Loads the discord API library
 const readline = require('readline');
 const {google} = require('googleapis');
+var cron = require('node-cron'); // run regular scheduled tasks
 
 const config = require('./config.json'); // load bot config
 
@@ -21,7 +22,7 @@ const botIntents = new Discord.Intents();
 botIntents.add(Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_VOICE_STATES, Discord.Intents.FLAGS.GUILD_MEMBERS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Discord.Intents.FLAGS.GUILD_MESSAGE_TYPING, Discord.Intents.FLAGS.DIRECT_MESSAGES, Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Discord.Intents.FLAGS.DIRECT_MESSAGE_TYPING);
 
 
-const client = new Discord.Client({intents: botIntents, partials: ["CHANNEL"], allowedMentions: { parse: ['users', 'roles'], repliedUser: true}}); // Initiates the client
+const client = new Discord.Client({intents: botIntents, partials: ['MESSAGE', 'CHANNEL', 'REACTION'], allowedMentions: { parse: ['users', 'roles'], repliedUser: true}}); // Initiates the client
 
 client.commands = new Discord.Collection(); // Creates an empty list in the client object to store all commands
 
@@ -49,6 +50,10 @@ for (const file of commandFiles) {
 
 client.cooldowns = new Discord.Collection(); // Creates an empty list for storing timeouts so people can't spam with commands
 
+// creates a list of people to ping for bump reminders
+client.bumpPings = new Discord.Collection();
+client.bumpPings.set("0",(new Date()).getTime());
+
 // load the core events into client
 client.events = new Discord.Collection();
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
@@ -71,12 +76,23 @@ client.on('ready', async function() {
     console.log(`${client.user.username} is up and running! Launched at: ${(new Date()).toUTCString()}.`);
     const startMusic = require("./music/setup.js");
     startMusic(client);
+    cron.schedule('*/5 * * * *', async () => { // check every 5 minutes if a reminder is needed
+      var bumpReminder = require('./bump_reminder.js');
+      try {
+        bumpReminder(client);
+      } catch (err) {
+        console.error(err);
+      }
+    });
 });
 
 client.on('messageCreate', async message => {
     if (message && message.author && message.author.bot) {
       if (message.channel.type != "DM") {
         client.events.get("onWordcount").event(message);
+      }
+      if (message.author.id =="302050872383242240") {
+        client.events.get("onBump").event(message);
       }
       return; // don't respond to bots aside from counting their word usage
     }

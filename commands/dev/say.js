@@ -11,18 +11,26 @@ module.exports = {
     usage: '<channelID|channel-mention|channel-name> <message-text>', // Help text to explain how to use the command (if it had any arguments)
     args: 2,
     execute(message, args) {
-      var message_text = message.content.replace(/^\S+ +/,"");
-      var channel = message_text.match(/^("[^"]+"|\S+) +/g).trim();
-      message_text = message_text.replace(/^("[^"]+"|\S+) +/g,"");
+      var message_text = message.content //.replace(/^\S+ +/,"");
+      //var channel = message_text.match(/^("[^"]+"|\S+) +/g).trim();
+      const re = new RegExp("^.*"+args[0]+" +");
+      message_text = message_text.replace(re,"").trim();
 
-      let channelID = channel.match(/\d{15,23}/g);
+      let channelID = args[0].match(/\d{15,23}/g);
       if (channelID && channelID[0] && Number(channelID[0]) < Number(message.id)) {
         channel = channelID[0];
       }
 
       // get channel
       message.client.channels.fetch(channelID).then(c=>{
-        c.send(content);
+        if (!c) {
+          return message.react('❌')
+        }
+        if (!c.permissionsFor(message.client.user.id).has('SEND_MESSAGES')) {
+          return message.reply("No perms :(")
+        }
+        c.send({content: message_text});
+        message.react('✅')
       }).catch((err)=>console.log(err));
     },
 };

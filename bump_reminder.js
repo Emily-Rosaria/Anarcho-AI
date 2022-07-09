@@ -12,21 +12,26 @@ module.exports = async function (client) {
   if (now.getTime() - latest < 2*oneHour) {
     return; // recent bump
   }
+  if (client.bumpPings.get("0") == latest) {
+    if (now.getTime() - latest < 4*oneHour) {
+      return; // don't remind if the recent "bump" was just a spoof for a reminder
+    }
+  }
 
   var guild = await client.guilds.resolve(guildID);
   var channel = await guild.channels.resolve(channelID);
 
-  lastBumps.forEach(async (timestamp, uID) => {
+  lastBumps.forEach((timestamp, uID) => {
     // keep
     if (uID == "0") {
       return;
     }
-    if (now.getTime() - timestamp > 5*oneHour) {
+    //if (now.getTime() - timestamp > 5*oneHour) {
       client.bumpPings.delete(uID);
-    }
+    //}
   });
-  // make next reminder be in 1 hour unless someone bumps sooner
-  client.bumpPings.set("0",now.getTime() - oneHour);
+  // make next reminder check will be in 2 hours unless someone bumps sooner
+  client.bumpPings.set("0",now.getTime());
 
   channel.send({
     content:`Remember to bump the server with the \`/bump\` command.`,

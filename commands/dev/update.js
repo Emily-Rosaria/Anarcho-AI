@@ -86,7 +86,8 @@ module.exports = {
       console.log('Events done, now reloading config.');
 
       delete require.cache[require.resolve('./../../config.json')];
-      delete require.cache[require.resolve('./../../starboard.js')];
+      //delete require.cache[require.resolve('./../../starboard.js')];
+      delete require.cache[require.resolve('./../../bump_reminder.js')];
 
       const assetJsons = fs.readdirSync('./assets',{ withFileTypes: true }).filter((f)=>f.name.endsWith('.json'));
       assetJsons.forEach((assetJ) => {

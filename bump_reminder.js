@@ -13,8 +13,8 @@ module.exports = async function (client) {
     return; // recent bump
   }
   if (client.bumpPings.get("0") == latest) {
-    if (now.getTime() - latest < 4*oneHour) {
-      return; // don't remind if the recent "bump" was just a spoof for a reminder
+    if (now.getTime() - latest < 6*oneHour) {
+      return; // don't remind if the recent "bump" was just a spoof for a reminder, unless 6 hours have passed
     }
   }
 

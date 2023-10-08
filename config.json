@@ -22,5 +22,6 @@
   "special": ["247344219809775617","453965784000102432","303320488657027074","269908878001438721","401171193480216586","335262757941280778","440250714095222784"],
   "dbName":"anarcho",
   "default_words":["titter","based","epic","pog","poggers","gamer","gaming","israel","praxis","palestine","cringe","bread","debat","sus","amogus","mashallah"],
-  "github":"https://github.com/Emily-Rosaria/Anarcho-AI"
+  "github":"https://github.com/Emily-Rosaria/Anarcho-AI",
+  "bans":["274696385884979201","613419812755865601","898214473318400020","586342122475487233","476068248874516480","475111311680864256"]
 }

@@ -8,6 +8,7 @@ const { TOKEN, PREFIX, GUILD, DEFAULT_VOLUME } = require("./util/Util");
 const i18n = require("./util/i18n");
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
+const config = require('./../config.json')
 
 module.exports = async function(client) {
   client.queue = new Map();
@@ -59,6 +60,9 @@ module.exports = async function(client) {
 
   client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
+    if (config.bans.includes(interaction.user.id)) {
+		  return;
+	  }
     const command = client.slashCommands.get(interaction.commandName);
     if (!command) return;
 

@@ -28,6 +28,10 @@ module.exports = {
       }
     }
 
+    if (config.bans.includes(message.author.id)) {
+		  return;
+	  }
+
     const botPing = ["<@" + client.user.id + ">","<@!" + client.user.id + ">"];
 
     const dmExtraPrefix = (message.channel.type == "DM") ? ["!","?","$","-"] : ["+"];

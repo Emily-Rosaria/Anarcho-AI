@@ -13,9 +13,9 @@ module.exports = async function (client) {
     return; // recent bump
   }
   if (client.bumpPings.get("0") == latest) {
-    if (now.getTime() - latest < 6*oneHour) {
+    //if (now.getTime() - latest < 24*oneHour) {
       return; // don't remind if the recent "bump" was just a spoof for a reminder, unless 6 hours have passed
-    }
+    //}
   }
 
   var guild = await client.guilds.resolve(guildID);
